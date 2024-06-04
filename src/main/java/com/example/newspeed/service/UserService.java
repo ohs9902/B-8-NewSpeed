@@ -24,9 +24,14 @@ public class UserService {
         String intro = signUpRequestDto.getIntro();
         String status = signUpRequestDto.getStatus();
         Optional<User> checkUserId = userRepository.findByUserId(userId);
+        Optional<User> checkEmail = userRepository.findByEmail(email);
         if(checkUserId.isPresent()){
             throw new IllegalArgumentException("이미 존재하는 id 입니다.");
         }
+        if(checkEmail.isPresent()){
+            throw new IllegalArgumentException("이미 존재하는 email 입니다.");
+        }
+
         User user = new User(userId,password,name,email,intro,status);
         userRepository.save(user);
     }

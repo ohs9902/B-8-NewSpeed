@@ -1,7 +1,6 @@
 package com.example.newspeed.controller;
 
 
-import com.example.newspeed.dto.contentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
