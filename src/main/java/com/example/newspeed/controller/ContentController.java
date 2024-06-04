@@ -4,6 +4,7 @@ package com.example.newspeed.controller;
 import com.example.newspeed.dto.contentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.service.ContentService;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
