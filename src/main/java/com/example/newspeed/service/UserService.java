@@ -1,9 +1,12 @@
 package com.example.newspeed.service;
 
 import com.example.newspeed.dto.SignUpRequestDto;
+import com.example.newspeed.entity.User;
 import com.example.newspeed.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -14,8 +17,20 @@ public class UserService {
     }
 
     public void singUp(SignUpRequestDto signUpRequestDto){
-
+        String userId = signUpRequestDto.getUserId();
+        String password = signUpRequestDto.getPassword();
+        String name = signUpRequestDto.getName();
+        String email = signUpRequestDto.getEmail();
+        String intro = signUpRequestDto.getIntro();
+        String status = signUpRequestDto.getStatus();
+        Optional<User> checkUserId = userRepository.findByUserId(userId);
+        if(checkUserId.isPresent()){
+            throw new IllegalArgumentException("이미 존재하는 id 입니다.");
+        }
+        User user = new User(userId,password,name,email,intro,status);
+        userRepository.save(user);
     }
+
 
 
 
