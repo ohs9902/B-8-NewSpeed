@@ -2,6 +2,9 @@ package com.example.newspeed.entity;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class User extends Timestamped {
     @Id
@@ -26,4 +29,9 @@ public class User extends Timestamped {
     private String status;
 
     private String refreshToken;
+
+    @JoinColumn(name = "")
+    @OneToMany
+    private List<Content>contentList = new ArrayList<>();
+
 }
