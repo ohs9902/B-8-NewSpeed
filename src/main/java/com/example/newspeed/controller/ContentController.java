@@ -1,7 +1,7 @@
 package com.example.newspeed.controller;
 
 
-import com.example.newspeed.dto.contentRequestDto;
+import com.example.newspeed.dto.ContentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,13 +26,13 @@ public class ContentController {
     }
 
     @PostMapping
-    public Content createNewsFeed(@RequestBody contentRequestDto request, Authentication authentication) {
+    public Content createNewsFeed(@RequestBody ContentRequestDto request, Authentication authentication) {
         Long authorId = Long.parseLong(authentication.getName());
         return contentService.createContent(authorId, request.getContent());
     }
 
     @PutMapping("/{id}")
-    public Content updateNewsFeed(@PathVariable Long id, @RequestBody contentRequestDto request, Authentication authentication) {
+    public Content updateNewsFeed(@PathVariable Long id, @RequestBody ContentRequestDto request, Authentication authentication) {
         Long authorId = Long.parseLong(authentication.getName());
         return contentService.updateContent(id, authorId, request.getContent());
     }

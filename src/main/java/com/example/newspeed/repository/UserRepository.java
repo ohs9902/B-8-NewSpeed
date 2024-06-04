@@ -1,4 +1,7 @@
 package com.example.newspeed.repository;
 
-public class UserRepository {
+import com.example.newspeed.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface UserRepository extends JpaRepository<User,Long> {
 }
