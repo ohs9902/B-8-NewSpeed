@@ -19,10 +19,32 @@ public class ContentService {
     }
 
     public Content getNewsFeedById(Long id) {
-        return contentRepository.findById(id).orElseThrow(() -> new RuntimeException("NewsFeed not found"));
+        return contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
     }
 
     @Transactional
+    public Content createContent(String contents) {
+        Content content = new Content();
+        content.setContent(contents);
+        content.setCreatedDate(LocalDateTime.now());
+        return contentRepository.save(content);
+    }
+
+    @Transactional
+    public Content updateContent(Long id, String contents) {
+        Content content = getNewsFeedById(id);
+        content.setContent(contents);
+        content.setUpdatedDate(LocalDateTime.now());
+        return contentRepository.save(content);
+    }
+
+    @Transactional
+    public void deleteContent(Long id) {
+        Content content = getNewsFeedById(id);
+        contentRepository.delete(content);
+    }
+
+    /*@Transactional
     public Content createContent(Long authorId, String contents) {
         Content content = new Content();
         content.setAuthorId(authorId);
@@ -35,7 +57,7 @@ public class ContentService {
     public Content updateContent(Long id, Long authorId, String contents) {
         Content content = getNewsFeedById(id);
         if (!content.getAuthorId().equals(authorId)) {
-            throw new RuntimeException("You are not authorized to update this post");
+            throw new RuntimeException("작성자가 아니여서 갱신할 수 없습니다.");
         }
         content.setContent(contents);
         content.setUpdatedDate(LocalDateTime.now());
@@ -46,8 +68,8 @@ public class ContentService {
     public void deleteContent(Long id, Long authorId) {
         Content content = getNewsFeedById(id);
         if (!content.getAuthorId().equals(authorId)) {
-            throw new RuntimeException("You are not authorized to delete this post");
+            throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
         }
         contentRepository.delete(content);
-    }
+    }*/
 }

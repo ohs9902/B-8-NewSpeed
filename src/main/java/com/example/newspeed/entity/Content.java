@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-
 public class Content {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
