@@ -1,4 +1,4 @@
 package com.example.newspeed.dto;
 
-public class SignUpDto {
+public class ProfileRequestDto {
 }
