@@ -18,7 +18,7 @@ public class ContentService {
         return contentRepository.findAllByOrderByCreatedDateDesc();
     }
 
-    public Content getNewsFeedById(Long id) {
+    public Content getContentById(Long id) {
         return contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
     }
 
@@ -32,7 +32,7 @@ public class ContentService {
 
     @Transactional
     public Content updateContent(Long id, String contents) {
-        Content content = getNewsFeedById(id);
+        Content content = getContentById(id);
         content.setContent(contents);
         content.setUpdatedDate(LocalDateTime.now());
         return contentRepository.save(content);
@@ -40,7 +40,7 @@ public class ContentService {
 
     @Transactional
     public void deleteContent(Long id) {
-        Content content = getNewsFeedById(id);
+        Content content = getContentById(id);
         contentRepository.delete(content);
     }
 
@@ -55,7 +55,7 @@ public class ContentService {
 
     @Transactional
     public Content updateContent(Long id, Long authorId, String contents) {
-        Content content = getNewsFeedById(id);
+        Content content = getContentById(id);
         if (!content.getAuthorId().equals(authorId)) {
             throw new RuntimeException("작성자가 아니여서 갱신할 수 없습니다.");
         }
@@ -66,7 +66,7 @@ public class ContentService {
 
     @Transactional
     public void deleteContent(Long id, Long authorId) {
-        Content content = getNewsFeedById(id);
+        Content content = getContentById(id);
         if (!content.getAuthorId().equals(authorId)) {
             throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
         }
