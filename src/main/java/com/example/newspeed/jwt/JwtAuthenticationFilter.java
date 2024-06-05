@@ -34,7 +34,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             try{
                 //요청받은 json을 객체 형태로 변환
                 LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(),LoginRequestDto.class);
-                log.info("Received login request: " + loginRequestDto.getUserId());
+                log.info("Received login request: " + loginRequestDto.getUserId() + "     " + loginRequestDto.getPassword());
                 UsernamePasswordAuthenticationToken authRequest =
                         new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(),loginRequestDto.getPassword());
                 //추가적인 요청정보를 authRequest에 설정
@@ -52,13 +52,16 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         log.info("로그인 성공 및 JWT생성");
-        String userId = ((UserDetailsImpl)authResult.getPrincipal()).getUsername();
-        String accessToken = jwtUtil.getAccessTokenFromRequest(request);
-        String refreshToken = jwtUtil.getRefreshTokenFromRequest(request);
-        jwtUtil.addJwtToCookie(response,accessToken,JwtUtil.AUTHORIZATION_HEADER);
-        jwtUtil.addJwtToCookie(response,refreshToken,JwtUtil.AUTHORIZATION_HEADER);
+        String userId = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
-        chain.doFilter(request,response);
+        String accessToken = jwtUtil.generateToken(userId, jwtUtil.ACCESS_TOKEN_EXPIRATION , "access");
+        String refreshToken = jwtUtil.generateToken(userId , jwtUtil.REFRESH_TOKEN_EXPIRATION,"refresh");
+
+        jwtUtil.addJwtToCookie(response, accessToken,jwtUtil.ACCESS_TOKEN_HEADER);
+        jwtUtil.addJwtToCookie(response, refreshToken,jwtUtil.REFRESH_TOKEN_HEADER);
+        log.info("accesstoken : "+accessToken);
+        log.info("refreshToken : "+refreshToken);
+
     }
 
     @Override
@@ -66,4 +69,5 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("로그인 실패!!");
         response.setStatus(401); //인증실패 401코드 전달
     }
+
 }
