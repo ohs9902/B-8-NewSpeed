@@ -50,7 +50,7 @@ public class User extends Timestamped {
     }
 
     public void update(String name, String email, String intro) {
-        this.name = name;
+        this.userName = name;
         this.email = email;
         this.intro = intro;
     }
