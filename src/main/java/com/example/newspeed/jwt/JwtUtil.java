@@ -1,13 +1,21 @@
 package com.example.newspeed.jwt;
 
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 
@@ -42,6 +50,40 @@ public class JwtUtil {
         byte[] bytes = Base64.getDecoder().decode(secret);
         key = Keys.hmacShaKeyFor(bytes);
     }
+
+    // JWT 토큰 substring
+    public String substringToken(String tokenValue) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
+            return tokenValue.substring(7);
+        }
+        logger.error("Not Found Token");
+        throw new NullPointerException("Not Found Token");
+    }
+
+    // JWT를 쿠키로 바꾸기
+    public void addJwtToCookie(HttpServletResponse res, String token, String headerName) {
+        try {
+            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+            Cookie cookie = new Cookie(headerName, token);
+            cookie.setPath("/");
+
+            res.addCookie(cookie);
+        } catch (UnsupportedEncodingException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    // 토큰에서 사용자 정보 가져오기
+    public Claims getUserInfoFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
+    }
+
+    // JWT 토큰에서 사용자 이름 추출
+    public String getUsernameFromToken(String token) {
+        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
+                .getBody().get("username", String.class);
+    }
+
 
     }
 
