@@ -24,7 +24,7 @@ public class User extends Timestamped {
     private String password;
 
     @Column(nullable = false)
-    private String name;
+    private String userName;
 
     @Column(nullable = false)
     private String email;
@@ -42,7 +42,7 @@ public class User extends Timestamped {
     public User(String userId, String password, String name, String email, String intro, String status) {
         this.userId = userId;
         this.password = password;
-        this.name = name;
+        this.userName = name;
         this.email = email;
         this.intro = intro;
         this.status = status;
