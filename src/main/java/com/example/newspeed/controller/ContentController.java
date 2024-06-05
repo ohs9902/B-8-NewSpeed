@@ -22,7 +22,7 @@ public class ContentController {
 
     @GetMapping("/{id}")
     public Content getNewsFeedById(@PathVariable Long id) {
-        return contentService.getNewsFeedById(id);
+        return contentService.getContentById(id);
     }
 
     @PostMapping

@@ -1,4 +1,4 @@
-package com.example.newspeed.jwt.jwt;
+package com.example.newspeed.jwt;
 
 public class JwtAuthenticationFilter {
 }

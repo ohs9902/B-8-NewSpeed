@@ -14,7 +14,7 @@ public class ProfileResponseDto {
 
     public ProfileResponseDto(User user) {
         this.userId = user.getUserId();
-        this.name = user.getName();
+        this.name = user.getUserName();
         this.email = user.getEmail();
         this.intro = user.getIntro();
     }
@@ -29,7 +29,7 @@ public class ProfileResponseDto {
     public static ProfileResponseDto toDto(User user) {
         return new ProfileResponseDto(
                 user.getUserId(),
-                user.getName(),
+                user.getUserName(),
                 user.getEmail(),
                 user.getIntro());
     }
