@@ -36,6 +36,7 @@ public class User extends Timestamped {
 
     private String refreshToken;
 
+    @JoinColumn(name = "")
     @OneToMany
     private List<Content>contentList = new ArrayList<>();
 
@@ -46,5 +47,8 @@ public class User extends Timestamped {
         this.email = email;
         this.intro = intro;
         this.status = status;
+    }
+    public void updatePassword(String newPassword) {
+        this.password = newPassword;
     }
 }
