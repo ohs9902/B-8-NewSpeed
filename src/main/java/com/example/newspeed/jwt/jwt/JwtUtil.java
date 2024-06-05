@@ -1,6 +1,7 @@
 package com.example.newspeed.jwt.jwt;
 
 
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +34,14 @@ public class JwtUtil {
     private String secret;
     private Key key;
 
+
     // 키 init 하는 메서드 구현해야함
     //    생성자가 만들어진후 한번만 실행됨
+    @PostConstruct
+    public void init() {
+        byte[] bytes = Base64.getDecoder().decode(secret);
+        key = Keys.hmacShaKeyFor(bytes);
+    }
 
     }
 
