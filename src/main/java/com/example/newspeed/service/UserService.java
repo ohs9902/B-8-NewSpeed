@@ -19,7 +19,7 @@ public class UserService {
     public void singUp(SignUpRequestDto signUpRequestDto){
         String userId = signUpRequestDto.getUserId();
         String password = signUpRequestDto.getPassword();
-        String name = signUpRequestDto.getName();
+        String name = signUpRequestDto.getUsername();
         String email = signUpRequestDto.getEmail();
         String intro = signUpRequestDto.getIntro();
         String status = signUpRequestDto.getStatus();
