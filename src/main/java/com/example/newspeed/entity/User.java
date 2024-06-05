@@ -48,7 +48,6 @@ public class User extends Timestamped {
         this.intro = intro;
         this.status = status;
     }
-
     public void update(String name, String email, String intro) {
         this.userName = name;
         this.email = email;
@@ -58,4 +57,5 @@ public class User extends Timestamped {
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
+
 }
