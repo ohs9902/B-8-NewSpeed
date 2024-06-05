@@ -1,7 +1,7 @@
 package com.example.newspeed.controller;
 
 
-import com.example.newspeed.dto.contentRequestDto;
+import com.example.newspeed.dto.ContentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.service.ContentService;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
