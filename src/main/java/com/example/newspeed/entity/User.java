@@ -48,6 +48,12 @@ public class User extends Timestamped {
         this.intro = intro;
         this.status = status;
     }
+
+    public void update(String name, String email, String intro) {
+        this.name = name;
+        this.email = email;
+        this.intro = intro;
+    }
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }
