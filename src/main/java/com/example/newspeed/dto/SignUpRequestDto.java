@@ -19,7 +19,7 @@ public class SignUpRequestDto {
     @Size(min = 10, message = "10자 이상만 가능 합니다.")
     private String password;
 
-    private String name;
+    private String Username;
 
     @NotNull
     @Email(message = "이메일 형식이 아닙니다.")
