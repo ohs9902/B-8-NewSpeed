@@ -33,7 +33,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.getUserName();
     }
     @Override
     public boolean isAccountNonExpired() {
