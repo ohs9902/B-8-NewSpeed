@@ -12,7 +12,7 @@ import lombok.Setter;
 public class SignUpRequestDto {
     @NotNull
     @Size(min = 10, max = 20, message = "10에서20자 이내로 만 가능합니다.")
-    @Pattern(regexp = "^[a-zA-Z0-9]+$", message = "대소문자 영어와 숫자만 가능합니다.")
+    @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "대소문자 영어와 숫자만 가능합니다.")
     private String userId;
 
     @NotNull

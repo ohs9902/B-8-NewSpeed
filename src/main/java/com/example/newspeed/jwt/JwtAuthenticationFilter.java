@@ -29,11 +29,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+
         if("application/json".equals(request.getContentType())){
             try{
                 //요청받은 json을 객체 형태로 변환
                 LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(),LoginRequestDto.class);
-
+                log.info("Received login request: " + loginRequestDto.getUserId());
                 UsernamePasswordAuthenticationToken authRequest =
                         new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(),loginRequestDto.getPassword());
                 //추가적인 요청정보를 authRequest에 설정

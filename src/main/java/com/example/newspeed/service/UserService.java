@@ -4,6 +4,7 @@ import com.example.newspeed.dto.SignUpRequestDto;
 import com.example.newspeed.entity.User;
 import com.example.newspeed.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,14 +12,17 @@ import java.util.Optional;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+
+    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void singUp(SignUpRequestDto signUpRequestDto){
         String userId = signUpRequestDto.getUserId();
-        String password = signUpRequestDto.getPassword();
+        String password = passwordEncoder.encode(signUpRequestDto.getPassword());
         String name = signUpRequestDto.getUsername();
         String email = signUpRequestDto.getEmail();
         String intro = signUpRequestDto.getIntro();

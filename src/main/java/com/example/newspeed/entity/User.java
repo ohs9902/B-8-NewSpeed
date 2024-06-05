@@ -36,9 +36,9 @@ public class User extends Timestamped {
 
     private String refreshToken;
 
-    @JoinColumn(name = "")
-    @OneToMany
-    private List<Content>contentList = new ArrayList<>();
+//    @JoinColumn(name = "")
+//    @OneToMany
+//    private List<Content>contentList = new ArrayList<>();
 
     public User(String userId, String password, String name, String email, String intro, String status) {
         this.userId = userId;
