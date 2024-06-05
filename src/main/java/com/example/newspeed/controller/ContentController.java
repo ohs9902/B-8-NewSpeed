@@ -4,7 +4,6 @@ package com.example.newspeed.controller;
 import com.example.newspeed.dto.ContentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.service.ContentService;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,21 +25,36 @@ public class ContentController {
         return contentService.getNewsFeedById(id);
     }
 
-//    @PostMapping
-//    public Content createNewsFeed(@RequestBody contentRequestDto request, Authentication authentication) {
-////        Long authorId = Long.parseLong(authentication.getName());
-////        return contentService.createContent(authorId, request.getContent());
-//    }
-//
-//    @PutMapping("/{id}")
-//    public Content updateNewsFeed(@PathVariable Long id, @RequestBody contentRequestDto request, Authentication authentication) {
-////        Long authorId = Long.parseLong(authentication.getName());
-////        return contentService.updateContent(id, authorId, request.getContent());
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public void deleteNewsFeed(@PathVariable Long id, Authentication authentication) {
-////        Long authorId = Long.parseLong(authentication.getName());
-////        contentService.deleteContent(id, authorId);
-//    }
+    @PostMapping
+    public Content createNewsFeed(@RequestBody ContentRequestDto request) {
+        return contentService.createContent(request.getContent());
+    }
+
+    @PutMapping("/{id}")
+    public Content updateNewsFeed(@PathVariable Long id, @RequestBody ContentRequestDto request) {
+        return contentService.updateContent(id, request.getContent());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteNewsFeed(@PathVariable Long id) {
+        contentService.deleteContent(id);
+    }
+
+/*    @PostMapping
+    public Content createNewsFeed(@RequestBody contentRequestDto request, Authentication authentication) {
+        Long authorId = Long.parseLong(authentication.getName());
+        return contentService.createContent(authorId, request.getContent());
+    }
+
+    @PutMapping("/{id}")
+    public Content updateNewsFeed(@PathVariable Long id, @RequestBody contentRequestDto request, Authentication authentication) {
+        Long authorId = Long.parseLong(authentication.getName());
+        return contentService.updateContent(id, authorId, request.getContent());
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteNewsFeed(@PathVariable Long id, Authentication authentication) {
+        Long authorId = Long.parseLong(authentication.getName());
+        contentService.deleteContent(id, authorId);
+    }*/
 }
