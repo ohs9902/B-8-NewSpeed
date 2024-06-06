@@ -31,51 +31,41 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        //AccessToken 가져온후 가공
         String accessToken = jwtUtil.getAccessTokenFromRequest(req);
+        log.info("엑세스 토큰 확인!!!!!!"  + accessToken);
         accessToken = jwtUtil.substringToken(accessToken);
 
+        if (StringUtils.hasText(accessToken)) {
+            // access토큰 감지
+            if (jwtUtil.validateToken(accessToken)) {
+                Claims info = jwtUtil.getUserInfoFromToken(accessToken);
+                try {
+                    setAuthentication(info.getSubject());
+                } catch (Exception e) {
+                    log.error(e.getMessage());
+                    return;
+                }
+            } else {
+                // refresh토큰 감지
+                String refreshToken = jwtUtil.getJwtFromHeader(req, JwtUtil.REFRESH_TOKEN_HEADER);
+                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
+                    Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
+                    String username = refreshTokenClaims.getSubject();
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-        //NullCheck
-        if (!StringUtils.hasText(accessToken)) {
-            return;
-        }
-        
-        // access토큰 감지(검증)
-        // 수정해야할 점 : AccessToken이 단순 만료 일때는 오류 메세지만 나오고, 필터는 종료되면 안됨
-        if (jwtUtil.validateToken(accessToken)) {
-            Claims info = jwtUtil.getUserInfoFromToken(accessToken);
-            try {
-                setAuthentication(info.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return;
+                    // 새로운 access토큰
+                    String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), 10 * 1000L,JwtUtil.ACCESS_TOKEN_HEADER);
+
+                    // 새로운 access토큰
+                    res.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
+
+                    setAuthentication(username);
+                } else {
+                    log.error("Both Access and Refresh tokens are invalid");
+                    return;
+                }
             }
         }
-
-        // Refresh토큰 감지(가져오기),가공하기
-        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
-        refreshToken = jwtUtil.substringToken(refreshToken);
-
-        //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
-        if (jwtUtil.validateToken(refreshToken)) {
-            Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
-            String username = refreshTokenClaims.getSubject();
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-            // 새로운 access토큰
-            String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), jwtUtil.ACCESS_TOKEN_EXPIRATION, JwtUtil.ACCESS_TOKEN_HEADER);
-
-            // 새로운 access토큰
-            //현재 방식은 Cookie에 전달 중인데 여기서는 헤더에 전달중임 통일해야함
-            res.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
-
-            setAuthentication(username);
-        } else {
-            log.error("Both Access and Refresh tokens are invalid");
-            return;
-        }
-
         filterChain.doFilter(req, res);
     }
 
