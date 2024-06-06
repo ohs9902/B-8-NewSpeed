@@ -35,6 +35,7 @@ public class ContentController {
     }
 
     @PostMapping
+    // 필터 부분에서 작동하는 UserDetailsImpl 을 가져와서 로그인 되어 있는 유저 가져오기
     public Content createNewsFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ContentRequestDto request) {
 
         return contentService.createContent(userDetails ,request.getContent());
