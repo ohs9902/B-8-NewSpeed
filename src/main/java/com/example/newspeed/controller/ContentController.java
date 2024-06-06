@@ -3,8 +3,15 @@ package com.example.newspeed.controller;
 
 import com.example.newspeed.dto.ContentRequestDto;
 import com.example.newspeed.entity.Content;
+import com.example.newspeed.entity.User;
+import com.example.newspeed.repository.UserRepository;
+import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.ContentService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,8 +19,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/content")
 public class ContentController {
+    private static final Logger log = LoggerFactory.getLogger(ContentController.class);
     @Autowired
     private ContentService contentService;
+
 
     @GetMapping
     public List<Content> getAllNewsFeeds() {
@@ -26,8 +35,9 @@ public class ContentController {
     }
 
     @PostMapping
-    public Content createNewsFeed(@RequestBody ContentRequestDto request) {
-        return contentService.createContent(request.getContent());
+    public Content createNewsFeed(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody ContentRequestDto request) {
+
+        return contentService.createContent(userDetails ,request.getContent());
     }
 
     @PutMapping("/{id}")

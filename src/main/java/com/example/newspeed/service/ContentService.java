@@ -1,8 +1,15 @@
 package com.example.newspeed.service;
 
 import com.example.newspeed.entity.Content;
+import com.example.newspeed.entity.User;
+import com.example.newspeed.jwt.JwtUtil;
 import com.example.newspeed.repository.ContentRepository;
+import com.example.newspeed.repository.UserRepository;
+import com.example.newspeed.security.UserDetailsImpl;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +18,11 @@ import java.util.List;
 
 @Service
 public class ContentService {
+    private static final Logger log = LoggerFactory.getLogger(ContentService.class);
     @Autowired
     private ContentRepository contentRepository;
+    @Autowired
+    private JwtUtil jwtUtil;
 
     public List<Content> getAllContents() {
         return contentRepository.findAllByOrderByCreatedDateDesc();
@@ -23,9 +33,15 @@ public class ContentService {
     }
 
     @Transactional
-    public Content createContent(String contents) {
+    public Content createContent(UserDetailsImpl userDetails, String contents) {
+
+        User user = userDetails.getUser();
+        log.info(user.getUserId());
+
+
         Content content = new Content();
         content.setContent(contents);
+        content.setUser(user);
         content.setCreatedDate(LocalDateTime.now());
         return contentRepository.save(content);
     }

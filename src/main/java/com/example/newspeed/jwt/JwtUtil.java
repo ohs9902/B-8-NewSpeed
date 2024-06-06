@@ -55,11 +55,11 @@ public class JwtUtil {
     }
 
     //토큰 생성 Access, Refresh
-    public String generateToken(String username, Long expires, String tokenType) {
+    public String generateToken(String userId, Long expires, String tokenType) {
         Date date = new Date();
 
         return BEARER_PREFIX +
-                Jwts.builder().setSubject(username)
+                Jwts.builder().setSubject(userId)
                         .claim(AUTHORIZATION_HEADER, tokenType)
                         .setExpiration(new Date(date.getTime() + expires))
                         .setIssuedAt(date)

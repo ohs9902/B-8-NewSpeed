@@ -31,7 +31,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = jwtUtil.getJwtFromHeader(req, JwtUtil.ACCESS_TOKEN_HEADER);
+        String accessToken = jwtUtil.getAccessTokenFromRequest(req);
+        log.info("엑세스 토큰 확인!!!!!!"  + accessToken);
+        accessToken = jwtUtil.substringToken(accessToken);
 
         if (StringUtils.hasText(accessToken)) {
             // access토큰 감지
@@ -68,17 +70,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     // 인증 처리
-    public void setAuthentication(String username) {
+    public void setAuthentication(String userId) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
+        Authentication authentication = createAuthentication(userId);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    private Authentication createAuthentication(String userId) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
