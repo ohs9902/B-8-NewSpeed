@@ -30,7 +30,7 @@ public class UserService {
         this.logoutFilter = logoutFilter;
         this.passwordEncoder = passwordEncoder;
     }
-
+    @Transactional
     public void singUp(SignUpRequestDto signUpRequestDto){
         String userId = signUpRequestDto.getUserId();
         String password = passwordEncoder.encode(signUpRequestDto.getPassword());
@@ -42,10 +42,17 @@ public class UserService {
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if(checkUserId.isPresent()){
             throw new IllegalArgumentException("이미 존재하는 id 입니다.");
+        } else if (userId.length()<10 || userId.length()>20) {
+            throw new IllegalArgumentException("10에서20자 이내로 만 가능합니다.");
+        } else if (!userId.matches("^[a-zA-Z0-9]*$")) {
+            throw new IllegalArgumentException("대소문자 영어와 숫자만 가능합니다.");
+        } else if (password.length()>10){
+            throw new IllegalArgumentException("비밀번호는 10자 이상만 가능 합니다.");
         }
         if(checkEmail.isPresent()){
             throw new IllegalArgumentException("이미 존재하는 email 입니다.");
         }
+        
 
         User user = new User(userId,password,name,email,intro,status);
         userRepository.save(user);

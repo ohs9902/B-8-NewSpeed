@@ -13,10 +13,12 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.IOException;
@@ -27,6 +29,8 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private JwtUtil jwtUtil;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @Autowired
     UserRepository userRepository;
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -49,8 +53,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                     if("탈퇴".equals(user.getStatus())){
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write("탈퇴한 계정입니다.");
-                        throw new DisabledException("회원 탈퇴된 계정입니다.");
+                    }else if (user.getPassword().equals(loginRequestDto.getPassword())){
+                        response.getWriter().write("비밀번호가 틀렸습니다.");
                     }
+                }else{
+                    response.setCharacterEncoding("UTF-8");
+                    response.getWriter().write("존재하지 않는 회원입니다.");
                 }
                 UsernamePasswordAuthenticationToken authRequest =
                         new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(),loginRequestDto.getPassword());
