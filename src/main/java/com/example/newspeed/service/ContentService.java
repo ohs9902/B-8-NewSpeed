@@ -1,9 +1,12 @@
 package com.example.newspeed.service;
 
 import com.example.newspeed.entity.Content;
+import com.example.newspeed.entity.User;
 import com.example.newspeed.repository.ContentRepository;
+import com.example.newspeed.security.UserDetailsImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,18 +27,20 @@ public class ContentService {
 
 
     @Transactional
-    public Content createContent(Long authorId, String contents) {
+    public Content createContent(UserDetailsImpl userDetails, String contents) {
+        User user = userDetails.getUser();
         Content content = new Content();
-        content.setAuthorId(authorId);
+        content.setUser(user);
         content.setContent(contents);
         content.setCreatedDate(LocalDateTime.now());
         return contentRepository.save(content);
     }
 
     @Transactional
-    public Content updateContent(Long id, Long authorId, String contents) {
+    public Content updateContent(Long id, UserDetailsImpl userDetails, String contents) {
+        User user = userDetails.getUser();
         Content content = getContentById(id);
-        if (!content.getAuthorId().equals(authorId)) {
+        if (!content.getUser().equals(user)) {
             throw new RuntimeException("작성자가 아니여서 갱신할 수 없습니다.");
         }
         content.setContent(contents);
@@ -44,9 +49,10 @@ public class ContentService {
     }
 
     @Transactional
-    public void deleteContent(Long id, Long authorId) {
+    public void deleteContent(Long id, UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         Content content = getContentById(id);
-        if (!content.getAuthorId().equals(authorId)) {
+        if (!content.getUser().equals(user)) {
             throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
         }
         contentRepository.delete(content);
