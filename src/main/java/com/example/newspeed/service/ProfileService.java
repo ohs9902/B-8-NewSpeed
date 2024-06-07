@@ -27,15 +27,15 @@ public class ProfileService {
         return ProfileResponseDto.toDto(findUser(id));
     }
 
-    public ProfileResponseDto update(ProfileRequestDto requestDto) {
-        User user = findUser(requestDto.getId());
+    public ProfileResponseDto update(Long authorId, ProfileRequestDto requestDto) {
+        User user = findUser(authorId);
 
         user.update(requestDto.getName(), requestDto.getIntro());
         return ProfileResponseDto.toDto(user);
     }
 
-    public ProfileResponseDto updatePassword(ProfileRequestDto requestDto) {
-        User user = findIDPwd(requestDto.getId(), requestDto.getPassword());
+    public ProfileResponseDto updatePassword(Long authorId, ProfileRequestDto requestDto) {
+        User user = findIDPwd(authorId, requestDto.getPassword());
 
         if(user.getPassword().equals(requestDto.getNewPassword())){
             throw new IllegalArgumentException("이전과 같은 비밀번호입니다.");

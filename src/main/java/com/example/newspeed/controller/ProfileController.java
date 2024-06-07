@@ -2,9 +2,11 @@ package com.example.newspeed.controller;
 
 import com.example.newspeed.dto.ProfileRequestDto;
 import com.example.newspeed.dto.ProfileResponseDto;
+import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.ProfileService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,12 +26,15 @@ public class ProfileController {
     }
 
     @PutMapping
-    public ResponseEntity<ProfileResponseDto> update(@RequestBody ProfileRequestDto requestDto) {
-        return ResponseEntity.ok().body(profileService.update(requestDto));
+    public ResponseEntity<ProfileResponseDto> update(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl authentication) {
+        Long authorId = Long.parseLong(authentication.getUsername());
+        return ResponseEntity.ok().body(profileService.update(authorId, requestDto));
     }
 
     @PutMapping("/password")
-    public ResponseEntity<ProfileResponseDto> updatePassword(@Valid @RequestBody ProfileRequestDto requestDto) {
-        return ResponseEntity.ok().body(profileService.updatePassword(requestDto));
+    public ResponseEntity<ProfileResponseDto> updatePassword(@AuthenticationPrincipal UserDetailsImpl authentication, @Valid @RequestBody ProfileRequestDto requestDto) {
+        Long authorId = Long.parseLong(authentication.getUsername());
+
+        return ResponseEntity.ok().body(profileService.updatePassword(authorId, requestDto));
     }
 }
