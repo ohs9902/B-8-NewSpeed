@@ -7,11 +7,9 @@ import com.example.newspeed.repository.ContentRepository;
 import com.example.newspeed.repository.LikeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -59,8 +57,11 @@ public class LikeService {
                 new IllegalArgumentException("선택한 개시물이 없습니다.")
         );
 
+        Like like = likeRepository.findByUserAndContent(user,content).orElseThrow(()->
+                new IllegalArgumentException("이 게시물에 좋아요를 한 적이 없습니다.")
+                );
+        likeRepository.delete(like);
 
-
-        return null;
+        return ResponseEntity.ok("좋아요 취소 완료.");
     }
 }
