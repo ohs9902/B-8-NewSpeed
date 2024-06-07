@@ -6,6 +6,7 @@ import com.example.newspeed.dto.CommentGetResponse;
 import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.CommentService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CommentController {
 
+    @Autowired
     private CommentService commentService;
 
     @PostMapping("/api/content/{id}/comment")
@@ -31,20 +33,20 @@ public class CommentController {
     }
 
     @GetMapping("/api/comment/{comment_id}")
-    public ResponseEntity<CommentGetResponse> getComment(@PathVariable Long commentId) {
-        CommentGetResponse comment = commentService.get(commentId);
+    public ResponseEntity<CommentGetResponse> getComment(@PathVariable Long comment_id) {
+        CommentGetResponse comment = commentService.get(comment_id);
         return ResponseEntity.ok(comment);
     }
 
     @PutMapping("/api/comment/{comment_id}")
-    public ResponseEntity<String> update(@PathVariable Long commentId, @RequestBody CommentRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Long id = commentService.update(commentId, request, userDetails);
+    public ResponseEntity<String> update(@PathVariable Long comment_id, @RequestBody CommentRequest request, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        Long id = commentService.update(comment_id, request, userDetails);
         return ResponseEntity.ok(id + " Comment updated");
     }
 
     @DeleteMapping("/api/comment/{comment_id}")
-    public ResponseEntity<String> delete(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Long id = commentService.delete(commentId, userDetails);
+    public ResponseEntity<String> delete(@PathVariable Long comment_id, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        Long id = commentService.delete(comment_id, userDetails);
         return ResponseEntity.ok(id + " Comment deleted");
     }
 }
