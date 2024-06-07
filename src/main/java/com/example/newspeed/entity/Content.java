@@ -1,5 +1,6 @@
 package com.example.newspeed.entity;
 
+import com.example.newspeed.dto.ContentDto;
 import jakarta.persistence.*;
 import java.util.List;
 import java.util.Set;

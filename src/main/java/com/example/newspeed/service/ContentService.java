@@ -94,4 +94,8 @@ public class ContentService {
     private ContentDto convertToDto(Content content) {
         return new ContentDto(content);
     }
+
+    private Content convertToModel(ContentDto contentDto) {
+        return new Content(contentDto);
+    }
 }
