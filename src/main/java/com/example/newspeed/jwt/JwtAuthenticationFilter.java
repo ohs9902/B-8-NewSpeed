@@ -62,10 +62,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("accesstoken : "+accessToken);
         log.info("refreshToken : "+refreshToken);
 
-
-        //쿠키가 아닌 헤더에 추가하고 싶으면 밑의 방법
-//        response.addHeader(JwtUtil.ACCESS_TOKEN_HEADER,accessToken);
-//        response.addHeader(JwtUtil.REFRESH_TOKEN_HEADER,accessToken);
     }
 
     @Override
