@@ -97,4 +97,21 @@ public class LikeService {
 
         return ResponseEntity.ok("좋아요 성공.");
     }
+
+
+    //댓글 좋아요 취소
+    public ResponseEntity<String> commentUnlike(Long commentId, User user) {
+
+        // // 게시물 존재 체크
+        Comment comment = commentRepository.findById(commentId).orElseThrow(() ->
+                new IllegalArgumentException("선택한 댓글이 없습니다.")
+        );
+
+        Like like = likeRepository.findByUserAndComment(user,comment).orElseThrow(()->
+                new IllegalArgumentException("이 댓글에 좋아요를 한 적이 없습니다.")
+        );
+        likeRepository.delete(like);
+
+        return ResponseEntity.ok(" 좋아요 취소 완료.");
+    }
 }

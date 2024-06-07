@@ -35,7 +35,14 @@ public class LikeController {
     public ResponseEntity<String> commentLike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         return likeService.commentLike(commentId,user);
-
     }
+
+    //댓글 좋아요
+    @DeleteMapping("/unlike/comment/{commentId}")
+    public ResponseEntity<String> commentUnlike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        return likeService.commentUnlike(commentId,user);
+    }
+
 
 }
