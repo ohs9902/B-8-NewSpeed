@@ -4,6 +4,7 @@ import com.example.newspeed.dto.SignUpRequestDto;
 import com.example.newspeed.entity.User;
 import com.example.newspeed.service.UserService;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping("/withdrawal")
-    public ResponseEntity<String> witdrawal(@RequestBody LoginRequestDto loginRequestDto) throws ServletException, IOException {
-        userService.withdrawal(loginRequestDto);
+    public ResponseEntity<String> witdrawal(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res) throws ServletException, IOException {
+        userService.withdrawal(loginRequestDto,res);
         return new ResponseEntity<String>("회원 탈퇴",HttpStatus.OK);
     }
 
