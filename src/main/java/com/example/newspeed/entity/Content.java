@@ -1,6 +1,8 @@
 package com.example.newspeed.entity;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +26,7 @@ public class Content {
     private LocalDateTime createdDate;
 
     private LocalDateTime updatedDate;
+
+    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
+    private List<Comment> comments;
 }
