@@ -25,7 +25,6 @@ public class Like {
     @JoinColumn(name = "content_id")
     private Content content;
 
-
 //    @ManyToOne
 //    @JoinColumn(name = "comment_id")
 //    private Comment comment;

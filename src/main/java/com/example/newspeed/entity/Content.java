@@ -28,10 +28,10 @@ public class Content {
     private LocalDateTime updatedDate;
 
     @OneToMany(mappedBy = "content",cascade = CascadeType.PERSIST, orphanRemoval = true)
-    private List<Like> likes = new ArrayList<>();
+    private List<Like> likeList = new ArrayList<>();
 
     public void addLike(Like like) {
-        this.likes.add(like);
+        this.likeList.add(like);
         like.setContent(this);
     }
 }
