@@ -61,10 +61,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // Refresh토큰 감지(가져오기),가공하기
         String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
+        refreshToken = jwtUtil.substringToken(refreshToken);
+
+        //NullCheck
         if(!StringUtils.hasText(refreshToken)){
             return;
         }
-        refreshToken = jwtUtil.substringToken(refreshToken);
 
         //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
         if (jwtUtil.validateToken(refreshToken)) {
