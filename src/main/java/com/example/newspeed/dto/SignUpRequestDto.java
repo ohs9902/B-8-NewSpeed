@@ -16,7 +16,7 @@ public class SignUpRequestDto {
     private String userId;
 
     @NotNull
-    @Size(min = 10, message = "10자 이상만 가능 합니다.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{10,}$", message = "대소문자 포함 영문, 숫자, 특수문자를 포함하여 10자 이상 입력해주세요.")
     private String password;
 
     private String Username;

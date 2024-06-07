@@ -32,7 +32,7 @@ public class User extends Timestamped {
     private String intro;
 
     @Column(nullable = false)
-    private String status;
+    private String status = "정상";
 
     private String refreshToken;
 
@@ -48,9 +48,8 @@ public class User extends Timestamped {
         this.intro = intro;
         this.status = status;
     }
-    public void update(String name, String email, String intro) {
+    public void update(String name, String intro) {
         this.userName = name;
-        this.email = email;
         this.intro = intro;
     }
 
