@@ -29,19 +29,16 @@ public class ContentController {
 
     @PostMapping
     public Content createNewsFeed(@RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
-        Long authorId = Long.parseLong(authentication.getUsername());
-        return contentService.createContent(authorId, request.getContent());
+        return contentService.createContent(authentication, request.getContent());
     }
 
     @PutMapping("/{id}")
     public Content updateNewsFeed(@PathVariable Long id, @RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
-        Long authorId = Long.parseLong(authentication.getUsername());
-        return contentService.updateContent(id, authorId, request.getContent());
+        return contentService.updateContent(id, authentication, request.getContent());
     }
 
     @DeleteMapping("/{id}")
     public void deleteNewsFeed(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl authentication) {
-        Long authorId = Long.parseLong(authentication.getUsername());
-        contentService.deleteContent(id, authorId);
+        contentService.deleteContent(id, authentication);
     }
 }

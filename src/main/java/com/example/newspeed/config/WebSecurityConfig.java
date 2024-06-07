@@ -4,6 +4,7 @@ package com.example.newspeed.config;
 import com.example.newspeed.jwt.JwtAuthenticationFilter;
 import com.example.newspeed.jwt.JwtAuthorizationFilter;
 import com.example.newspeed.jwt.JwtUtil;
+import com.example.newspeed.jwt.LogoutFilter;
 import com.example.newspeed.security.UserDetailsServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +57,10 @@ public class WebSecurityConfig {
     }
 
     @Bean
+    public LogoutFilter logoutFilter(){
+        return new LogoutFilter(jwtUtil);
+    }
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
         http.csrf((csrf) -> csrf.disable());
@@ -68,13 +73,14 @@ public class WebSecurityConfig {
                 authorizeHttpRequests
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
                         .requestMatchers("/api/user/**").permitAll() // '/api/user/'로 시작하는 요청 모두 접근 허가
-                        .requestMatchers("/v3/api-docs/**","/swagger-ui/**").permitAll()//스웨거를 위한 허용
+                        .requestMatchers("/v3/api-docs/**","/swagger-ui/**","/swagger-ui.html").permitAll()//스웨거를 위한 허용
                         .anyRequest().authenticated() // 그 외 모든 요청 인증처리
 
         );
 
 
         // 필터관리 (필터 작동 순서 지정)
+        http.addFilterBefore(logoutFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);
         http.addFilterBefore(jwtAuthenticationFilter(), JwtAuthorizationFilter.class);
 

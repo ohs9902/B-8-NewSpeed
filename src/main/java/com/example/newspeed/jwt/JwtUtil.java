@@ -137,6 +137,7 @@ public class JwtUtil {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
+            return true;
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
@@ -147,6 +148,18 @@ public class JwtUtil {
 
     public String getJwtFromHeader(HttpServletRequest req, String headerName) {
         return req.getHeader(headerName);
+    }
+
+    public void clearCookies(HttpServletResponse res){
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN_HEADER,null);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        res.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER,null);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        res.addCookie(refreshTokenCookie);
     }
 }
 
