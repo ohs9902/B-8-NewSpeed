@@ -12,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -22,6 +23,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
 
     public JwtAuthorizationFilter(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService) {
         this.jwtUtil = jwtUtil;
@@ -30,7 +32,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
-
+        String path = req.getRequestURI();
+        if (PATH_MATCHER.match("/swagger-ui/**", path) || PATH_MATCHER.match("/v3/api-docs/**", path)) {
+            filterChain.doFilter(req, res);
+            return;
+        }
         //AccessToken 가져온후 가공
         String accessToken = jwtUtil.getAccessTokenFromRequest(req);
         accessToken = jwtUtil.substringToken(accessToken);
