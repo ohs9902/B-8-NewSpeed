@@ -32,6 +32,7 @@ public class ProfileService {
         User user = userDetails.getUser();
 
         user.update(requestDto.getName(), requestDto.getIntro());
+        userRepository.save(user);
         return ProfileResponseDto.toDto(user);
     }
 
@@ -47,7 +48,7 @@ public class ProfileService {
 
 
         user.updatePassword(requestDto.getNewPassword());
-
+        userRepository.save(user);
         return ProfileResponseDto.toDto(user);
     }
 
