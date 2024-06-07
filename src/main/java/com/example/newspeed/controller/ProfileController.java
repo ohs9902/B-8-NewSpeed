@@ -27,14 +27,11 @@ public class ProfileController {
 
     @PutMapping
     public ResponseEntity<ProfileResponseDto> update(@RequestBody ProfileRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl authentication) {
-        Long authorId = Long.parseLong(authentication.getUsername());
-        return ResponseEntity.ok().body(profileService.update(authorId, requestDto));
+        return ResponseEntity.ok().body(profileService.update(authentication, requestDto));
     }
 
     @PutMapping("/password")
     public ResponseEntity<ProfileResponseDto> updatePassword(@AuthenticationPrincipal UserDetailsImpl authentication, @Valid @RequestBody ProfileRequestDto requestDto) {
-        Long authorId = Long.parseLong(authentication.getUsername());
-
-        return ResponseEntity.ok().body(profileService.updatePassword(authorId, requestDto));
+        return ResponseEntity.ok().body(profileService.updatePassword(authentication, requestDto));
     }
 }
