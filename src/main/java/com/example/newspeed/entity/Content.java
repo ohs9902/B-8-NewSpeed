@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,4 +26,12 @@ public class Content {
     private LocalDateTime createdDate;
 
     private LocalDateTime updatedDate;
+
+    @OneToMany(mappedBy = "content",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Like> likes = new ArrayList<>();
+
+    public void addLike(Like like) {
+        this.likes.add(like);
+        like.setContent(this);
+    }
 }

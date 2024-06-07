@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 public class LikeService {
@@ -32,13 +33,19 @@ public class LikeService {
             throw new IllegalArgumentException("자신의 게시물에는 좋아요를 누를 수 없습니다.");
         }
         // 좋아요가 중복인지 체크
-
-
+        Optional<Like> existingLike = likeRepository.findByUserAndContent(user, content);
+        if (existingLike.isPresent()) {
+            throw new IllegalArgumentException("이미 좋아요를 누른 게시글 입니다.");
+        }
         //좋아요 츄가
         Like like = new Like();
         like.setUser(user);
         like.setContent(content);
         like.setCreatedAt(LocalDateTime.now());
+
+        //content에 있는 like 리스트 추가
+        content.addLike(like);
+        // likeEntity 저장
         likeRepository.save(like);
 
         return ResponseEntity.ok("좋아요 성공.");
