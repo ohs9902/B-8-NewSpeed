@@ -25,14 +25,14 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "content_id")
     private Content news;
 
-    private String username;
+    private Long userId;
 
     private String comment;
 
     private Long likeCnt;
 
-    public Comment(String username, String comment, Content news) {
-        this.username = username;
+    public Comment(Long userId, String comment, Content news) {
+        this.userId = userId;
         this.comment = comment;
         this.news = news;
     }
