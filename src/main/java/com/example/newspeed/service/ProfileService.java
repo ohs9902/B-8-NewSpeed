@@ -30,7 +30,7 @@ public class ProfileService {
     public ProfileResponseDto update(ProfileRequestDto requestDto) {
         User user = findUser(requestDto.getId());
 
-        user.update(requestDto.getName(), requestDto.getEmail(), requestDto.getIntro());
+        user.update(requestDto.getName(), requestDto.getIntro());
         return ProfileResponseDto.toDto(user);
     }
 
@@ -39,7 +39,7 @@ public class ProfileService {
 
         if(user.getPassword().equals(requestDto.getNewPassword())){
             throw new IllegalArgumentException("이전과 같은 비밀번호입니다.");
-        } // 비밀번호 형식 예외처리 구현
+        }
 
         user.updatePassword(requestDto.getNewPassword());
 

@@ -3,6 +3,7 @@ package com.example.newspeed.controller;
 import com.example.newspeed.dto.ProfileRequestDto;
 import com.example.newspeed.dto.ProfileResponseDto;
 import com.example.newspeed.service.ProfileService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +29,7 @@ public class ProfileController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity<ProfileResponseDto> updatePassword(@RequestBody ProfileRequestDto requestDto) {
+    public ResponseEntity<ProfileResponseDto> updatePassword(@Valid @RequestBody ProfileRequestDto requestDto) {
         return ResponseEntity.ok().body(profileService.updatePassword(requestDto));
     }
 }
