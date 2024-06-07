@@ -1,6 +1,7 @@
 package com.example.newspeed.entity;
 
 
+import com.example.newspeed.dto.ContentDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -36,4 +37,5 @@ public class Comment extends Timestamped{
         this.comment = comment;
         this.news = news;
     }
+
 }

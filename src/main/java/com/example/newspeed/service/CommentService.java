@@ -2,6 +2,7 @@ package com.example.newspeed.service;
 
 import com.example.newspeed.dto.CommentRequest;
 import com.example.newspeed.dto.CommentGetResponse;
+import com.example.newspeed.dto.ContentDto;
 import com.example.newspeed.entity.Comment;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.entity.User;
@@ -38,12 +39,11 @@ public class CommentService {
 
     }
 
-
     //댓글 생성
     @Transactional
     public Long create(Long contentId, CommentRequest request, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Content content = contentService.getContentById(contentId);
+        Content content = contentService.getContentById2(contentId);
         Comment comment = new Comment(user.getId(), request.getComment(), content);
         commentRepository.save(comment);
         return comment.getId();
