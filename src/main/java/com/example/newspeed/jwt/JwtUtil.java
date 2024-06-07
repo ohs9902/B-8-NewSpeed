@@ -148,5 +148,17 @@ public class JwtUtil {
     public String getJwtFromHeader(HttpServletRequest req, String headerName) {
         return req.getHeader(headerName);
     }
+
+    public void clearCookies(HttpServletResponse res){
+        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN_HEADER,null);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(0);
+        res.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER,null);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(0);
+        res.addCookie(refreshTokenCookie);
+    }
 }
 
