@@ -32,7 +32,7 @@ public class User extends Timestamped {
     private String intro;
 
     @Column(nullable = false)
-    private String status;
+    private String status = "정상";
 
     private String refreshToken;
 
