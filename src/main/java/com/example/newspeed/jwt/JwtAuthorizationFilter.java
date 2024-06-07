@@ -33,7 +33,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         String path = req.getRequestURI();
-        if (PATH_MATCHER.match("/swagger-ui/**", path) || PATH_MATCHER.match("/v3/api-docs/**", path) || PATH_MATCHER.match("/api/user/**", path)) {
+        if (PATH_MATCHER.match("/swagger-ui/**", path) || PATH_MATCHER.match("/v3/api-docs/**", path)|| PATH_MATCHER.match("/api/user/**", path)) {
             filterChain.doFilter(req, res);
             return;
         }
