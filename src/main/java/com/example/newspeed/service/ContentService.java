@@ -1,5 +1,6 @@
 package com.example.newspeed.service;
 
+import com.example.newspeed.dto.ContentDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.entity.User;
 import com.example.newspeed.repository.ContentRepository;
@@ -15,69 +16,77 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ContentService {
     @Autowired
     private ContentRepository contentRepository;
 
-    public List<Content> getAllContents() {
-        return contentRepository.findAllByOrderByCreatedDateDesc();
+    public List<ContentDto> getAllContents() {
+        return contentRepository.findAll().stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public Content getContentById(Long id) {
-        return contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
+    public ContentDto getContentById(Long id) {
+        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
+        return convertToDto(content);
     }
-
 
     @Transactional
-    public Content createContent(UserDetailsImpl userDetails, String contents) {
+    public ContentDto createContent(UserDetailsImpl userDetails, String contents) {
         User user = userDetails.getUser();
         Content content = new Content();
         content.setUser(user);
         content.setContent(contents);
         content.setCreatedDate(LocalDateTime.now());
-        return contentRepository.save(content);
+        Content savedContent = contentRepository.save(content);
+        return convertToDto(savedContent);
     }
 
     @Transactional
-    public Content updateContent(Long id, UserDetailsImpl userDetails, String contents) {
+    public ContentDto updateContent(Long id, UserDetailsImpl userDetails, String contents) {
         User user = userDetails.getUser();
-        Content content = getContentById(id);
+        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
         if (!content.getUser().equals(user)) {
             throw new RuntimeException("작성자가 아니여서 갱신할 수 없습니다.");
         }
         content.setContent(contents);
         content.setUpdatedDate(LocalDateTime.now());
-        return contentRepository.save(content);
+        Content updatedContent = contentRepository.save(content);
+        return convertToDto(updatedContent);
     }
 
     @Transactional
     public void deleteContent(Long id, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Content content = getContentById(id);
+        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
         if (!content.getUser().equals(user)) {
             throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
         }
         contentRepository.delete(content);
     }
 
-    //페이지 정렬
-    public Page<Content> getContents(int page, int size, String sortBy) {
+    public Page<ContentDto> getContents(int page, int size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).descending());
-        return contentRepository.findAll(pageable);
+        Page<Content> contentPage = contentRepository.findAll(pageable);
+        return contentPage.map(this::convertToDto);
     }
 
-
-    //생성일자기준 정렬
-    public Page<Content> getContentsSortedByCreatedAt(int page, int size) {
+    public Page<ContentDto> getContentsSortedByCreatedAt(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        return contentRepository.findAll(pageable);
+        Page<Content> contentPage = contentRepository.findAll(pageable);
+        return contentPage.map(this::convertToDto);
     }
 
-    //특정기간 정렬
-    public Page<Content> searchContentsByDateRange(LocalDateTime startDate, LocalDateTime endDate, int page, int size) {
+    public Page<ContentDto> searchContentsByDateRange(LocalDateTime startDate, LocalDateTime endDate, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdDate").descending());
-        return contentRepository.findByCreatedDateBetween(startDate, endDate, pageable);
+        Page<Content> contentPage = contentRepository.findByCreatedDateBetween(startDate, endDate, pageable);
+        return contentPage.map(this::convertToDto);
+    }
+
+    private ContentDto convertToDto(Content content) {
+        return new ContentDto(content);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.newspeed.controller;
 
 
+import com.example.newspeed.dto.ContentDto;
 import com.example.newspeed.dto.ContentRequestDto;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.security.UserDetailsImpl;
@@ -22,25 +23,25 @@ public class ContentController {
 
     //전체조회
     @GetMapping
-    public List<Content> getAllNewsFeeds() {
+    public List<ContentDto> getAllNewsFeeds() {
         return contentService.getAllContents();
     }
 
     //특정조회
     @GetMapping("/{id}")
-    public Content getNewsFeedById(@PathVariable Long id) {
+    public ContentDto getNewsFeedById(@PathVariable Long id) {
         return contentService.getContentById(id);
     }
 
     //생성
     @PostMapping
-    public Content createNewsFeed(@RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
+    public ContentDto createNewsFeed(@RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
         return contentService.createContent(authentication, request.getContent());
     }
 
     //수정
     @PutMapping("/{id}")
-    public Content updateNewsFeed(@PathVariable Long id, @RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
+    public ContentDto updateNewsFeed(@PathVariable Long id, @RequestBody ContentRequestDto request, @AuthenticationPrincipal UserDetailsImpl authentication) {
         return contentService.updateContent(id, authentication, request.getContent());
     }
 
@@ -52,7 +53,7 @@ public class ContentController {
 
     //페이지 기능
     @GetMapping("/pages")
-    public Page<Content> getContents(@RequestParam(defaultValue = "0") int page,
+    public Page<ContentDto> getContents(@RequestParam(defaultValue = "0") int page,
                                      @RequestParam(defaultValue = "10") int size,
                                      @RequestParam(defaultValue = "createdDate") String sortBy) {
         return contentService.getContents(page, size, sortBy);
@@ -60,14 +61,14 @@ public class ContentController {
 
     //생성일자기준 정렬
     @GetMapping("/pages/sortedByCreatedAt")
-    public Page<Content> getContentsSortedByCreatedAt(@RequestParam(defaultValue = "0") int page,
+    public Page<ContentDto> getContentsSortedByCreatedAt(@RequestParam(defaultValue = "0") int page,
                                                       @RequestParam(defaultValue = "10") int size) {
         return contentService.getContentsSortedByCreatedAt(page, size);
     }
 
     //특정기간 정렬
     @GetMapping("/pages/search")
-    public Page<Content> searchContents(@RequestParam String startDate,
+    public Page<ContentDto> searchContents(@RequestParam String startDate,
                                         @RequestParam String endDate,
                                         @RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int size) {
