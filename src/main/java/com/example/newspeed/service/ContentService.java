@@ -22,29 +22,8 @@ public class ContentService {
         return contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
     }
 
-    @Transactional
-    public Content createContent(String contents) {
-        Content content = new Content();
-        content.setContent(contents);
-        content.setCreatedDate(LocalDateTime.now());
-        return contentRepository.save(content);
-    }
 
     @Transactional
-    public Content updateContent(Long id, String contents) {
-        Content content = getContentById(id);
-        content.setContent(contents);
-        content.setUpdatedDate(LocalDateTime.now());
-        return contentRepository.save(content);
-    }
-
-    @Transactional
-    public void deleteContent(Long id) {
-        Content content = getContentById(id);
-        contentRepository.delete(content);
-    }
-
-    /*@Transactional
     public Content createContent(Long authorId, String contents) {
         Content content = new Content();
         content.setAuthorId(authorId);
@@ -71,5 +50,5 @@ public class ContentService {
             throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
         }
         contentRepository.delete(content);
-    }*/
+    }
 }
