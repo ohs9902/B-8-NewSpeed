@@ -31,54 +31,68 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
-        String accessToken = jwtUtil.getJwtFromHeader(req, JwtUtil.ACCESS_TOKEN_HEADER);
+        //AccessToken 가져온후 가공
+        String accessToken = jwtUtil.getAccessTokenFromRequest(req);
+        accessToken = jwtUtil.substringToken(accessToken);
 
-        if (StringUtils.hasText(accessToken)) {
-            // access토큰 감지
-            if (jwtUtil.validateToken(accessToken)) {
-                Claims info = jwtUtil.getUserInfoFromToken(accessToken);
-                try {
-                    setAuthentication(info.getSubject());
-                } catch (Exception e) {
-                    log.error(e.getMessage());
-                    return;
-                }
-            } else {
-                // refresh토큰 감지
-                String refreshToken = jwtUtil.getJwtFromHeader(req, JwtUtil.REFRESH_TOKEN_HEADER);
-                if (StringUtils.hasText(refreshToken) && jwtUtil.validateToken(refreshToken)) {
-                    Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
-                    String username = refreshTokenClaims.getSubject();
-                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                    // 새로운 access토큰
-                    String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), 10 * 1000L,JwtUtil.ACCESS_TOKEN_HEADER);
+        //NullCheck
+        if (!StringUtils.hasText(accessToken)) {
+            return;
+        }
 
-                    // 새로운 access토큰
-                    res.setHeader(JwtUtil.ACCESS_TOKEN_HEADER, newAccessToken);
-
-                    setAuthentication(username);
-                } else {
-                    log.error("Both Access and Refresh tokens are invalid");
-                    return;
-                }
+        // access토큰 감지(검증)
+        // 수정해야할 점 : AccessToken이 단순 만료 일때는 오류 메세지만 나오고, 필터는 종료되면 안됨
+        if (jwtUtil.validateToken(accessToken)) {
+            Claims info = jwtUtil.getUserInfoFromToken(accessToken);
+            try {
+                setAuthentication(info.getSubject());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return;
             }
         }
+
+        // Refresh토큰 감지(가져오기),가공하기
+        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
+        refreshToken = jwtUtil.substringToken(refreshToken);
+
+        //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
+        if (jwtUtil.validateToken(refreshToken)) {
+            Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
+            String username = refreshTokenClaims.getSubject();
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            // 새로운 access토큰
+            String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), jwtUtil.ACCESS_TOKEN_EXPIRATION, JwtUtil.ACCESS_TOKEN_HEADER);
+            jwtUtil.addJwtToCookie(res, newAccessToken, JwtUtil.ACCESS_TOKEN_HEADER);
+
+            try {
+                setAuthentication(refreshTokenClaims.getSubject());
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                return;
+            }
+        } else {
+            log.error("Both Access and Refresh tokens are invalid");
+            return;
+        }
+
         filterChain.doFilter(req, res);
     }
 
     // 인증 처리
-    public void setAuthentication(String username) {
+    public void setAuthentication(String userId) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
-        Authentication authentication = createAuthentication(username);
+        Authentication authentication = createAuthentication(userId);
         context.setAuthentication(authentication);
 
         SecurityContextHolder.setContext(context);
     }
 
     // 인증 객체 생성
-    private Authentication createAuthentication(String username) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+    private Authentication createAuthentication(String userId) {
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userId);
         return new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
     }
 }
