@@ -28,12 +28,12 @@ public class CommentService {
     // 자신의 댓글인지 확인
     public void checkUser(Long commentId, UserDetailsImpl userDetails) {
         Comment comment = findById(commentId);
-        Long commentUserId = comment.getUserId();
+        Long commentUserId = comment.getUser().getId();
 
         User user = userDetails.getUser();
         Long userId = user.getId();
 
-        if (!comment.getUserId().equals(userId)) {
+        if (!comment.getUser().getId().equals(userId)) {
             throw new RuntimeException("Comment user id mismatch");
         }
 
@@ -44,7 +44,7 @@ public class CommentService {
     public Long create(Long contentId, CommentRequest request, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Content content = contentService.getContentById2(contentId);
-        Comment comment = new Comment(user.getId(), request.getComment(), content);
+        Comment comment = new Comment(user, request.getComment(), content);
         commentRepository.save(comment);
         return comment.getId();
     }
@@ -53,7 +53,7 @@ public class CommentService {
     @Transactional
     public CommentGetResponse get(Long commentId) {
         Comment comment = findById(commentId);
-        return new CommentGetResponse(comment.getId(), comment.getUserId(), comment.getComment());
+        return new CommentGetResponse(comment.getId(), comment.getUser().getId(), comment.getComment());
     }
 
     //댓글 수정

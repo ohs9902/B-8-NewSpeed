@@ -2,15 +2,13 @@ package com.example.newspeed.entity;
 
 
 import com.example.newspeed.dto.ContentDto;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -26,16 +24,26 @@ public class Comment extends Timestamped{
     @JoinColumn(name = "content_id")
     private Content news;
 
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     private String comment;
 
     private Long likeCnt;
 
-    public Comment(Long userId, String comment, Content news) {
-        this.userId = userId;
+    @OneToMany(mappedBy = "comment",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Like> likeList = new ArrayList<>();
+
+    public Comment(User user, String comment, Content news) {
+        this.user = user;
         this.comment = comment;
         this.news = news;
+    }
+
+    public void addLike(Like like) {
+        this.likeList.add(like);
+        like.setComment(this);
     }
 
 }

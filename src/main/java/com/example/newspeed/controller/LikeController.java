@@ -18,18 +18,24 @@ public class LikeController {
 
     //게시물 좋아요
     @PostMapping("/like/content/{contentId}")
-    public ResponseEntity<String> like(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<String> contentLike(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
        return likeService.contentLike(contentId,user);
 
     }
 
     @DeleteMapping("/unlike/content/{contentId}")
-    public ResponseEntity<String> unlike(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<String> contentUnlike(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         return likeService.contentUnlike(contentId,user);
     }
 
+    //댓글 좋아요
+    @PostMapping("/like/comment/{commentId}")
+    public ResponseEntity<String> commentLike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        return likeService.commentLike(commentId,user);
 
+    }
 
 }
