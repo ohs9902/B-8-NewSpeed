@@ -60,6 +60,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
             // 새로운 access토큰
+            //쿠키가 아닌 헤더에 새로 발급해야함
             String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), jwtUtil.ACCESS_TOKEN_EXPIRATION, JwtUtil.ACCESS_TOKEN_HEADER);
             jwtUtil.addJwtToCookie(res, newAccessToken, JwtUtil.ACCESS_TOKEN_HEADER);
             log.info("새 Access Token 발급 ");
