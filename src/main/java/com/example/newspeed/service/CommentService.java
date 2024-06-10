@@ -20,12 +20,12 @@ public class CommentService {
     private final ContentService contentService;
 
 
-    //아이디로 Comment 찾기
+    //댓글 아이디로 댓글 찾기
     public Comment findById(Long id) {
-        return commentRepository.findById(id).orElseThrow(() -> new RuntimeException("Comment not found"));
+        return commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 없습니다."));
     }
 
-    // 자신의 댓글인지 확인
+    // 수정, 삭제 할 댓글이  자신의 댓글인지 확인
     public void checkUser(Long commentId, UserDetailsImpl userDetails) {
         Comment comment = findById(commentId);
         Long commentUserId = comment.getUserId();
@@ -34,16 +34,25 @@ public class CommentService {
         Long userId = user.getId();
 
         if (!comment.getUserId().equals(userId)) {
-            throw new RuntimeException("Comment user id mismatch");
+            throw new IllegalArgumentException("자신의 댓글만 수정, 삭제 할 수 있습니다.");
         }
-
     }
+
+    //생성, 수정 시 댓글 내용 null 체크
+    public void checkText(CommentRequest commentRequest) {
+        String text = commentRequest.getComment();
+        if(text.isBlank() || text.isBlank()){
+            throw new IllegalArgumentException("댓글 내용을 입력해주세요");
+        }
+    }
+
 
     //댓글 생성
     @Transactional
     public Long create(Long contentId, CommentRequest request, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         Content content = contentService.getContentById2(contentId);
+        checkText(request);
         Comment comment = new Comment(user.getId(), request.getComment(), content);
         commentRepository.save(comment);
         return comment.getId();
@@ -59,6 +68,7 @@ public class CommentService {
     //댓글 수정
     @Transactional
     public Long update(Long commentId, CommentRequest request, UserDetailsImpl userDetails) {
+        checkText(request);
         checkUser(commentId, userDetails);
         Comment comment = findById(commentId);
         comment.setComment(request.getComment());

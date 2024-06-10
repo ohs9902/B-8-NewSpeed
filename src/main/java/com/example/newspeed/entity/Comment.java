@@ -2,6 +2,7 @@ package com.example.newspeed.entity;
 
 
 import com.example.newspeed.dto.ContentDto;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,13 +23,17 @@ public class Comment extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     @ManyToOne
     @JoinColumn(name = "content_id")
     private Content news;
 
+
     private Long userId;
 
+    @Column(nullable = false)
     private String comment;
+
 
     private Long likeCnt;
 
