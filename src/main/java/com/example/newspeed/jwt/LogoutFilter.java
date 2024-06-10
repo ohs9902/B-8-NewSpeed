@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.logout.SecurityContextLog
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Enumeration;
+
 @Slf4j(topic = "로그아웃")
 public class LogoutFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
@@ -25,6 +27,13 @@ public class LogoutFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         if("/api/user/logout".equals(request.getRequestURI()) &&"POST".equalsIgnoreCase(request.getMethod())){
+            // 모든 헤더를 로그에 출력
+            Enumeration<String> headerNames = request.getHeaderNames();
+            while (headerNames.hasMoreElements()) {
+                String headerName = headerNames.nextElement();
+                String headerValue = request.getHeader(headerName);
+                log.info("Header Name: {}, Header Value: {}", headerName, headerValue);
+            }
             Authentication auth = SecurityContextHolder.getContext().getAuthentication();
             if(auth!= null){
                 new SecurityContextLogoutHandler().logout(request,response,auth);
@@ -33,7 +42,9 @@ public class LogoutFilter extends OncePerRequestFilter {
             response.setHeader(jwtUtil.AUTHORIZATION_HEADER,"");
 
             //user 엔티티에서 refresh토큰 삭제
-
+            String userId = request.getHeader("userId");
+            log.info(userId);
+            userService.updateRefreshToken(userId,null);
             response.setCharacterEncoding("UTF-8");
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("로그아웃 성공");
