@@ -78,4 +78,11 @@ public class ContentController {
         LocalDateTime end = LocalDateTime.parse(endDate, formatter);
         return contentService.searchContentsByDateRange(start, end, page, size);
     }
+
+    @GetMapping("/pages/sortedByLike")
+    public Page<ContentDto> getContentsOrderByLikes(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
+        return contentService.getContentsOrderByLikes(page,size);
+
+    }
 }

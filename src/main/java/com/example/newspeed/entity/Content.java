@@ -33,8 +33,11 @@ public class Content {
     @OneToMany(mappedBy = "content",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Like> likeList = new ArrayList<>();
 
+    private Integer likes;
+
     public void addLike(Like like) {
         this.likeList.add(like);
         like.setContent(this);
+        likes = likeList.size();
     }
 }
