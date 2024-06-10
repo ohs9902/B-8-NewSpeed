@@ -65,6 +65,7 @@ public class UserService {
            User user = optionalUser.get();
            if(passwordEncoder.matches(loginRequestDto.getPassword(),user.getPassword())){
                user.withdhrawnStatus();
+               user.updateToken("");
                userRepository.save(user);
                SecurityContextHolder.clearContext(); // 현재 사용자의 인증 정보를 제거
                JwtUtil jwtUtil = new JwtUtil();
