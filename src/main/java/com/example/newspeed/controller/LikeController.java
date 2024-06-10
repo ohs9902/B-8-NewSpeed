@@ -8,25 +8,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/like")
+@RequestMapping("/api")
 public class LikeController {
     @Autowired
     LikeService likeService;
 
     //게시물 좋아요
-    @PostMapping("/content/{contentId}")
-    public ResponseEntity<String> like(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+    @PostMapping("/like/content/{contentId}")
+    public ResponseEntity<String> contentLike(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
        return likeService.contentLike(contentId,user);
 
     }
 
+    @DeleteMapping("/unlike/content/{contentId}")
+    public ResponseEntity<String> contentUnlike(@PathVariable Long contentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        return likeService.contentUnlike(contentId,user);
+    }
+
+    //댓글 좋아요
+    @PostMapping("/like/comment/{commentId}")
+    public ResponseEntity<String> commentLike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        return likeService.commentLike(commentId,user);
+    }
+
+    //댓글 좋아요
+    @DeleteMapping("/unlike/comment/{commentId}")
+    public ResponseEntity<String> commentUnlike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        return likeService.commentUnlike(commentId,user);
+    }
 
 
 }

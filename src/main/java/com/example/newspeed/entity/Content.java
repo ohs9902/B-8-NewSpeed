@@ -1,6 +1,8 @@
 package com.example.newspeed.entity;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import lombok.Getter;
@@ -27,6 +29,11 @@ public class Content {
 
     private LocalDateTime updatedDate;
 
-    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
-    private List<Comment> comments;
+    @OneToMany(mappedBy = "content",cascade = CascadeType.PERSIST, orphanRemoval = true)
+    private List<Like> likeList = new ArrayList<>();
+
+    public void addLike(Like like) {
+        this.likeList.add(like);
+        like.setContent(this);
+    }
 }

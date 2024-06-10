@@ -34,7 +34,7 @@ public class JwtUtil {
     public static final String REFRESH_TOKEN_HEADER = "REFRESH_TOKEN_HEADER";
 
     // Access Token 만료시간 설정 (10초)
-    public final long ACCESS_TOKEN_EXPIRATION = 10 * 1000L; // 10초
+    public final long ACCESS_TOKEN_EXPIRATION = 30 * 1000L; // 30초
     // Refresh Token 만료기간 설정(1시간)
     public final long REFRESH_TOKEN_EXPIRATION = 60 * 60 * 1000L; //1시간
 

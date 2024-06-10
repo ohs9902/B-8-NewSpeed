@@ -25,10 +25,9 @@ public class Like {
     @JoinColumn(name = "content_id")
     private Content content;
 
-
-//    @ManyToOne
-//    @JoinColumn(name = "comment_id")
-//    private Comment comment;
+    @ManyToOne
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
