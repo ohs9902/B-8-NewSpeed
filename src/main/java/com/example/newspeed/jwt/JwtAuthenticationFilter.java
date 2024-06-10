@@ -84,8 +84,9 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String refreshToken = jwtUtil.generateToken(userId , jwtUtil.REFRESH_TOKEN_EXPIRATION,"refresh");
 
         //헤더에 전달해야함
+        jwtUtil.addJwtToHeader(response,accessToken,jwtUtil.AUTHORIZATION_HEADER );
 
-
+        //엑세스 토큰은 헤더에 전달 성공,refresh 토큰은 Entity에 저장 하면 됨
 
         //쿠키 전달방식
 //        jwtUtil.addJwtToCookie(response, accessToken,jwtUtil.ACCESS_TOKEN_HEADER);
@@ -93,6 +94,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         log.info("accesstoken : "+accessToken);
         log.info("refreshToken : "+refreshToken);
+
 
     }
 
