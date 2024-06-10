@@ -37,7 +37,7 @@ public class UserService {
         String name = signUpRequestDto.getUsername();
         String email = signUpRequestDto.getEmail();
         String intro = signUpRequestDto.getIntro();
-        String status = signUpRequestDto.getStatus();
+        //String status = signUpRequestDto.getStatus();
         Optional<User> checkUserId = userRepository.findByUserId(userId);
         Optional<User> checkEmail = userRepository.findByEmail(email);
         if(checkUserId.isPresent()){
@@ -54,7 +54,7 @@ public class UserService {
         }
         
 
-        User user = new User(userId,password,name,email,intro,status);
+        User user = new User(userId,password,name,email,intro);
         userRepository.save(user);
     }
     @Transactional
@@ -64,7 +64,7 @@ public class UserService {
        if (optionalUser.isPresent()){
            User user = optionalUser.get();
            if(passwordEncoder.matches(loginRequestDto.getPassword(),user.getPassword())){
-               user.setStatus("탈퇴");
+               user.withdhrawnStatus();
                userRepository.save(user);
                SecurityContextHolder.clearContext(); // 현재 사용자의 인증 정보를 제거
                JwtUtil jwtUtil = new JwtUtil();

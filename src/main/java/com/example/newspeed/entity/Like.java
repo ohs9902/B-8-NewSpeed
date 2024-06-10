@@ -30,6 +30,6 @@ public class Like {
     private Comment comment;
 
     private LocalDateTime createdAt;
-    private LocalDateTime modifiedAt;
+
 
 }
