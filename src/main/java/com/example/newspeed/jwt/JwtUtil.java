@@ -81,20 +81,6 @@ public class JwtUtil {
     }
 
 
-//
-//    // JWT를 쿠키로 바꾸기
-//    public void addJwtToCookie(HttpServletResponse res, String token, String headerName) {
-//        try {
-//            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
-//            Cookie cookie = new Cookie(headerName, token);
-//            cookie.setPath("/");
-//
-//            res.addCookie(cookie);
-//        } catch (UnsupportedEncodingException e) {
-//            logger.error(e.getMessage());
-//        }
-//    }
-
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
@@ -125,12 +111,6 @@ public class JwtUtil {
         if (token != null && !token.isEmpty()) {
             return token;
         }
-//            try {
-//                return URLDecoder.decode(token, "UTF-8");
-//            } catch (UnsupportedEncodingException e) {
-//                return null;
-//            }
-//        }
         return null;
     }
 

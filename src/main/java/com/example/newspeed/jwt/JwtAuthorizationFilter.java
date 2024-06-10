@@ -59,31 +59,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 log.error(e.getMessage());
                 return;
             }
-
-        //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
-//        if (jwtUtil.validateToken(refreshToken) && accessTokenExpiration) {
-//            Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
-//            String username = refreshTokenClaims.getSubject();
-//            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//
-//            // 새로운 access토큰
-//            //쿠키가 아닌 헤더에 새로 발급해야함
-//            String newAccessToken = jwtUtil.generateToken(userDetails.getUsername(), jwtUtil.ACCESS_TOKEN_EXPIRATION, JwtUtil.AUTHORIZATION_HEADER);
-//            jwtUtil.addJwtToHeader(res, newAccessToken, JwtUtil.AUTHORIZATION_HEADER);
-//            log.info("새 Access Token 발급 ");
-//            log.info("새 Access Token : " + newAccessToken);
-//
-//            try {
-//                setAuthentication(refreshTokenClaims.getSubject());
-//            } catch (Exception e) {
-//                log.error(e.getMessage());
-//                return;
-//            }
-//        } else {
-//            log.error("Both Access and Refresh tokens are invalid");
-//            return;
-//        }
-
         filterChain.doFilter(req, res);
     }
 
