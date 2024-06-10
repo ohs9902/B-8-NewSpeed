@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -36,8 +38,14 @@ public class Content {
     private Integer likes;
 
     public void addLike(Like like) {
-        this.likeList.add(like);
+        likeList.add(like);
         like.setContent(this);
-        likes = likeList.size();
+        likes++;
+    }
+
+    public void removeLike(Like like) {
+        likeList.remove(like);
+        like.setContent(null);
+        likes--;
     }
 }

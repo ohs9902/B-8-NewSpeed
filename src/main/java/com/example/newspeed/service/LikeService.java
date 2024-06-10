@@ -64,6 +64,7 @@ public class LikeService {
         Like like = likeRepository.findByUserAndContent(user,content).orElseThrow(()->
                 new IllegalArgumentException("이 게시물에 좋아요를 한 적이 없습니다.")
                 );
+        content.removeLike(like);
         likeRepository.delete(like);
 
         return ResponseEntity.ok("좋아요 취소 완료.");
