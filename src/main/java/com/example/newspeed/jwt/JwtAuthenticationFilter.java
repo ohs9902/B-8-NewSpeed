@@ -5,6 +5,7 @@ import com.example.newspeed.entity.User;
 import com.example.newspeed.repository.UserRepository;
 import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.UserService;
+import com.example.newspeed.status.UserStatus;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -54,7 +55,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
                 Optional<User> optionalUser = userRepository.findByUserId(loginRequestDto.getUserId());
                 if(optionalUser.isPresent()){
                     User user = optionalUser.get();
-                    if("탈퇴".equals(user.getStatus())){
+                    if(UserStatus.WITHDRAWN.equals(user.getStatus())){
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write("탈퇴한 계정입니다.");
                     }else if (user.getPassword().equals(loginRequestDto.getPassword())){
