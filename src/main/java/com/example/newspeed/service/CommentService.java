@@ -50,6 +50,7 @@ public class CommentService {
     //댓글 생성
     @Transactional
     public Long create(Long contentId, CommentRequest request, UserDetailsImpl userDetails) {
+        checkText(request);
         User user = userDetails.getUser();
         Content content = contentService.getContentById2(contentId);
         Comment comment = new Comment(user, request.getComment(), content);
@@ -67,6 +68,7 @@ public class CommentService {
     //댓글 수정
     @Transactional
     public Long update(Long commentId, CommentRequest request, UserDetailsImpl userDetails) {
+        checkText(request);
         checkUser(commentId, userDetails);
         Comment comment = findById(commentId);
         comment.setComment(request.getComment());
