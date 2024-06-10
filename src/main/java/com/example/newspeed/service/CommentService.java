@@ -20,12 +20,12 @@ public class CommentService {
     private final ContentService contentService;
 
 
-    //아이디로 Comment 찾기
+    //댓글 아이디로 댓글 찾기
     public Comment findById(Long id) {
-        return commentRepository.findById(id).orElseThrow(() -> new RuntimeException("Comment not found"));
+        return commentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("선택한 댓글이 없습니다."));
     }
 
-    // 자신의 댓글인지 확인
+    // 수정, 삭제 할 댓글이  자신의 댓글인지 확인
     public void checkUser(Long commentId, UserDetailsImpl userDetails) {
         Comment comment = findById(commentId);
         Long commentUserId = comment.getUser().getId();
@@ -34,9 +34,17 @@ public class CommentService {
         Long userId = user.getId();
 
         if (!comment.getUser().getId().equals(userId)) {
-            throw new RuntimeException("Comment user id mismatch");
+            throw new IllegalArgumentException("자신의 댓글만 수정, 삭제 할 수 있습니다.");
         }
 
+    }
+
+    //생성, 수정 시 댓글 내용 null 체크
+    public void checkText(CommentRequest commentRequest) {
+        String text = commentRequest.getComment();
+        if(text.isBlank() || text.isBlank()){
+            throw new IllegalArgumentException("댓글 내용을 입력해주세요");
+        }
     }
 
     //댓글 생성

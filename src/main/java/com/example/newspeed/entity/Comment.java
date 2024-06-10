@@ -30,8 +30,6 @@ public class Comment extends Timestamped{
 
     private String comment;
 
-    private Long likeCnt;
-
     @OneToMany(mappedBy = "comment",cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Like> likeList = new ArrayList<>();
 
