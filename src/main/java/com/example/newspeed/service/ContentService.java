@@ -29,12 +29,12 @@ public class ContentService {
     }
 
     public Content getContentById2(Long id) {
-        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
+        Content content = contentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("content를 찾을 수 없습니다"));
         return content;
     }
 
     public ContentDto getContentById(Long id) {
-        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
+        Content content = contentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("content를 찾을 수 없습니다"));
         return convertToDto(content);
     }
 
