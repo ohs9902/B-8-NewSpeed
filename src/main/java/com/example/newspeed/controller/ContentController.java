@@ -8,6 +8,7 @@ import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
