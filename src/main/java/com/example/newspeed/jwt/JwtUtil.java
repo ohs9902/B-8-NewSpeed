@@ -16,9 +16,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
@@ -86,11 +83,7 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody();
     }
 
-    // JWT 토큰에서 사용자 이름 추출
-    public String getUsernameFromToken(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token)
-                .getBody().get("username", String.class);
-    }
+
 
 
 
@@ -130,20 +123,5 @@ public class JwtUtil {
 
     }
 
-    public String getJwtFromHeader(HttpServletRequest req, String headerName) {
-        return req.getHeader(headerName);
-    }
-
-    public void clearCookies(HttpServletResponse res){
-        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN_HEADER,null);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(0);
-        res.addCookie(accessTokenCookie);
-
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_HEADER,null);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(0);
-        res.addCookie(refreshTokenCookie);
-    }
 }
 

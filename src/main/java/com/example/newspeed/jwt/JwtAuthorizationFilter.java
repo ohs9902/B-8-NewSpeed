@@ -1,15 +1,12 @@
 package com.example.newspeed.jwt;
 
-import com.example.newspeed.entity.User;
 import com.example.newspeed.security.UserDetailsServiceImpl;
-import com.example.newspeed.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -54,11 +51,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         // 인증처리
         try {
-                setAuthentication(accessTokenClaims.getSubject());
-            } catch (Exception e) {
-                log.error(e.getMessage());
-                return;
-            }
+            setAuthentication(accessTokenClaims.getSubject());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return;
+        }
         filterChain.doFilter(req, res);
     }
 
@@ -66,11 +63,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         // hasText : Null체크
         if (!StringUtils.hasText(accessToken)) {
             log.error("AccessToken이 없습니다.");
-            return ;
+            return;
         }
         // Access 토큰 유효성 검사
         try {
-             jwtUtil.validateToken(accessToken);
+            jwtUtil.validateToken(accessToken);
         } catch (Exception e) {
             log.error("Access Token Error");
         }

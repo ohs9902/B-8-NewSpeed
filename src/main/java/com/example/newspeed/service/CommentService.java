@@ -1,8 +1,7 @@
 package com.example.newspeed.service;
 
-import com.example.newspeed.dto.CommentRequest;
 import com.example.newspeed.dto.CommentGetResponse;
-import com.example.newspeed.dto.ContentDto;
+import com.example.newspeed.dto.CommentRequest;
 import com.example.newspeed.entity.Comment;
 import com.example.newspeed.entity.Content;
 import com.example.newspeed.entity.User;
@@ -42,7 +41,7 @@ public class CommentService {
     //생성, 수정 시 댓글 내용 null 체크
     public void checkText(CommentRequest commentRequest) {
         String text = commentRequest.getComment();
-        if(text.isBlank() || text.isBlank()){
+        if (text.isBlank() || text.isBlank()) {
             throw new IllegalArgumentException("댓글 내용을 입력해주세요");
         }
     }

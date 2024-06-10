@@ -14,8 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -38,7 +36,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    public JwtAuthenticationFilter(JwtUtil jwtUtil,UserService userService) {
+
+    public JwtAuthenticationFilter(JwtUtil jwtUtil, UserService userService) {
         this.jwtUtil = jwtUtil;
         this.userService = userService;
         setFilterProcessesUrl("/api/user/login");
@@ -47,32 +46,32 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-        if("application/json".equals(request.getContentType())){
-            try{
+        if ("application/json".equals(request.getContentType())) {
+            try {
                 //요청받은 json을 객체 형태로 변환
-                LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(),LoginRequestDto.class);
+                LoginRequestDto loginRequestDto = objectMapper.readValue(request.getInputStream(), LoginRequestDto.class);
                 log.info("Received login request: " + loginRequestDto.getUserId() + "     " + loginRequestDto.getPassword());
                 Optional<User> optionalUser = userRepository.findByUserId(loginRequestDto.getUserId());
-                if(optionalUser.isPresent()){
+                if (optionalUser.isPresent()) {
                     User user = optionalUser.get();
-                    if(UserStatus.WITHDRAWN.equals(user.getStatus())){
+                    if (UserStatus.WITHDRAWN.equals(user.getStatus())) {
                         response.setCharacterEncoding("UTF-8");
                         response.getWriter().write("탈퇴한 계정입니다.");
-                    }else if (user.getPassword().equals(loginRequestDto.getPassword())){
+                    } else if (user.getPassword().equals(loginRequestDto.getPassword())) {
                         response.getWriter().write("비밀번호가 틀렸습니다.");
                     }
-                }else{
+                } else {
                     response.setCharacterEncoding("UTF-8");
                     response.getWriter().write("존재하지 않는 회원입니다.");
                 }
                 UsernamePasswordAuthenticationToken authRequest =
-                        new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(),loginRequestDto.getPassword());
+                        new UsernamePasswordAuthenticationToken(loginRequestDto.getUserId(), loginRequestDto.getPassword());
 
                 //추가적인 요청정보를 authRequest에 설정
-                setDetails(request,authRequest);
+                setDetails(request, authRequest);
                 //athentication manager를 통해 인증 시도
                 return this.getAuthenticationManager().authenticate(authRequest);
-            }catch(IOException e){
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
@@ -85,22 +84,22 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("로그인 성공 및 JWT생성");
         String userId = ((UserDetailsImpl) authResult.getPrincipal()).getUsername();
 
-        String accessToken = jwtUtil.generateToken(userId, jwtUtil.ACCESS_TOKEN_EXPIRATION , "access");
-        String refreshToken = jwtUtil.generateToken(userId , jwtUtil.REFRESH_TOKEN_EXPIRATION,"refresh");
+        String accessToken = jwtUtil.generateToken(userId, jwtUtil.ACCESS_TOKEN_EXPIRATION, "access");
+        String refreshToken = jwtUtil.generateToken(userId, jwtUtil.REFRESH_TOKEN_EXPIRATION, "refresh");
 
         //헤더에 전달해야함
-        jwtUtil.addJwtToHeader(response,accessToken,jwtUtil.AUTHORIZATION_HEADER );
+        jwtUtil.addJwtToHeader(response, accessToken, jwtUtil.AUTHORIZATION_HEADER);
 
         //헤더에 userId 전달
-        response.setHeader("userId",userId);
+        response.setHeader("userId", userId);
 
         //refresh 토큰을 Entity에 저장
-        userService.updateRefreshToken(userId,refreshToken);
+        userService.updateRefreshToken(userId, refreshToken);
 
 
-        log.info("accesstoken : "+accessToken);
-        log.info("refreshToken : "+refreshToken);
-        log.info("userId : "+ userId );
+        log.info("accesstoken : " + accessToken);
+        log.info("refreshToken : " + refreshToken);
+        log.info("userId : " + userId);
         //로그인 메세지 띄우기
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
