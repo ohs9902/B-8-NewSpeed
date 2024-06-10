@@ -43,10 +43,10 @@ public class UserService {
         if(checkUserId.isPresent()){
             throw new IllegalArgumentException("이미 존재하는 id 입니다.");
         } else if (userId.length()<10 || userId.length()>20) {
-            throw new IllegalArgumentException("10에서20자 이내로 만 가능합니다.");
+            throw new IllegalArgumentException("ID는 10에서20자 이내로 만 가능합니다.");
         } else if (!userId.matches("^[a-zA-Z0-9]*$")) {
             throw new IllegalArgumentException("대소문자 영어와 숫자만 가능합니다.");
-        } else if (password.length()>10){
+        } else if (password.length()<10){
             throw new IllegalArgumentException("비밀번호는 10자 이상만 가능 합니다.");
         }
         if(checkEmail.isPresent()){
@@ -77,10 +77,13 @@ public class UserService {
        }else{
            throw new UsernameNotFoundException("사용자를 찾을 수 없거나 비밀번호가 일치하지 않습니다.");
        }
-
-
     }
-
+    @Transactional
+    public void updateRefreshToken(String userId,String refreshToekn){
+        User user = userRepository.findByUserId(userId).orElseThrow(()->new UsernameNotFoundException("존재하지 않는 유저입니다."));
+        user.updateToken(refreshToekn);
+        userRepository.save(user);
+    }
 
 
 

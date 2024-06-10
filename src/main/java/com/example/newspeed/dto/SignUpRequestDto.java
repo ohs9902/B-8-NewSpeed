@@ -28,4 +28,5 @@ public class SignUpRequestDto {
     @Size(max = 255, message = "255자 이내로만 작성 가능합니다.")
     private String intro;
     private String status;
+
 }
