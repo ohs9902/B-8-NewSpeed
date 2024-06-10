@@ -53,9 +53,9 @@ public class ContentService {
     @Transactional
     public ContentDto updateContent(Long id, UserDetailsImpl userDetails, String contents) {
         User user = userDetails.getUser();
-        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
-        if (!content.getUser().equals(user)) {
-            throw new RuntimeException("작성자가 아니여서 갱신할 수 없습니다.");
+        Content content = contentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("content를 찾을 수 없습니다"));
+        if (!content.getUser().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("작성자가 아니여서 갱신할 수 없습니다.");
         }
         content.setContent(contents);
         content.setUpdatedDate(LocalDateTime.now());
@@ -66,9 +66,9 @@ public class ContentService {
     @Transactional
     public void deleteContent(Long id, UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
-        Content content = contentRepository.findById(id).orElseThrow(() -> new RuntimeException("content를 찾을 수 없습니다"));
-        if (!content.getUser().equals(user)) {
-            throw new RuntimeException("작성자가 아니여서 삭제할 수 없습니다.");
+        Content content = contentRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("content를 찾을 수 없습니다"));
+        if (!content.getUser().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("작성자가 아니여서 삭제할 수 없습니다.");
         }
         contentRepository.delete(content);
     }
