@@ -1,12 +1,15 @@
 package com.example.newspeed.jwt;
 
+import com.example.newspeed.entity.User;
 import com.example.newspeed.security.UserDetailsServiceImpl;
+import com.example.newspeed.service.UserService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -21,6 +24,7 @@ import java.io.IOException;
 @Slf4j(topic = "JWT 검증 및 인가")
 public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
+
     private final JwtUtil jwtUtil;
     private final UserDetailsServiceImpl userDetailsService;
     private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
@@ -33,7 +37,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
         String path = req.getRequestURI();
-        if (PATH_MATCHER.match("/swagger-ui/**", path) || PATH_MATCHER.match("/v3/api-docs/**", path)|| PATH_MATCHER.match("/api/user/**", path)) {
+        if (PATH_MATCHER.match("/swagger-ui/**", path) || PATH_MATCHER.match("/v3/api-docs/**", path) || PATH_MATCHER.match("/api/user/**", path)) {
             filterChain.doFilter(req, res);
             return;
         }
@@ -41,12 +45,14 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         String accessToken = jwtUtil.getAccessTokenFromRequest(req);
         // JWT 토큰 substring
         accessToken = jwtUtil.substringToken(accessToken);
+
+        //검사
+        checkAccessToken(accessToken);
         log.info("AccessToken= " + accessToken);
 
         Claims accessTokenClaims = jwtUtil.getUserInfoFromToken(accessToken);
 
-
-        //임시 인증처리
+        // 인증처리
         try {
                 setAuthentication(accessTokenClaims.getSubject());
             } catch (Exception e) {
@@ -54,20 +60,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 return;
             }
 
-        //토큰 만료만 검사하기 위한 메서드
-        boolean accessTokenExpiration = checkAccessToken(accessToken);
-
-
-//        // Refresh토큰 감지(가져오기),가공하기
-//        String refreshToken = jwtUtil.getRefreshTokenFromRequest(req);
-//        refreshToken = jwtUtil.substringToken(refreshToken);
-//
-//        //NullCheck
-//        if(!StringUtils.hasText(refreshToken)){
-//            return;
-//        }
-
-//        //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
+        //리프레쉬 토큰 유효성 검사 후 새 Access 토큰 발급
 //        if (jwtUtil.validateToken(refreshToken) && accessTokenExpiration) {
 //            Claims refreshTokenClaims = jwtUtil.getUserInfoFromToken(refreshToken);
 //            String username = refreshTokenClaims.getSubject();
@@ -94,19 +87,18 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         filterChain.doFilter(req, res);
     }
 
-    private boolean checkAccessToken(String accessToken) {
+    private void checkAccessToken(String accessToken) {
         // hasText : Null체크
         if (!StringUtils.hasText(accessToken)) {
             log.error("AccessToken이 없습니다.");
-            return false;
+            return ;
         }
         // Access 토큰 유효성 검사
         try {
-            return jwtUtil.validateToken(accessToken);
+             jwtUtil.validateToken(accessToken);
         } catch (Exception e) {
             log.error("Access Token Error");
         }
-        return false;
     }
 
     // 인증 처리

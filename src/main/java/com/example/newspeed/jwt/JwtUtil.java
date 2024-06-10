@@ -1,6 +1,7 @@
 package com.example.newspeed.jwt;
 
 
+import com.example.newspeed.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -112,10 +113,9 @@ public class JwtUtil {
     public String getAccessTokenFromRequest(HttpServletRequest req) {
         return getTokenFromRequest(req, AUTHORIZATION_HEADER);
     }
-
-    // 필요 없을듯?
-    public String getRefreshTokenFromRequest(HttpServletRequest req) {
-        return getTokenFromRequest(req, REFRESH_TOKEN_HEADER);
+    //리프레시 토큰은 유저에게서 가져오기
+    public String getRefreshTokenFromRequest(User user) {
+        return user.getRefreshToken();
     }
 
     //HttpServletRequest 에서 Cookie Value  JWT 가져오기
@@ -124,31 +124,30 @@ public class JwtUtil {
         String token = req.getHeader(headerName);
         if (token != null && !token.isEmpty()) {
             return token;
+        }
 //            try {
 //                return URLDecoder.decode(token, "UTF-8");
 //            } catch (UnsupportedEncodingException e) {
 //                return null;
 //            }
-        }
+//        }
         return null;
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            return true;
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
-        return false;
+
     }
 
     public String getJwtFromHeader(HttpServletRequest req, String headerName) {
