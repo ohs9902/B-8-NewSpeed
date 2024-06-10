@@ -102,12 +102,18 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         log.info("accesstoken : "+accessToken);
         log.info("refreshToken : "+refreshToken);
         log.info("userId : "+ userId );
-
+        //로그인 메세지 띄우기
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("\"로그인 성공!!\"");
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         log.info("로그인 실패!!");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write("\"로그인 실패\"");
         response.setStatus(401); //인증실패 401코드 전달
     }
 
