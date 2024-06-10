@@ -1,6 +1,7 @@
 package com.example.newspeed.jwt;
 
 
+import com.example.newspeed.entity.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -34,7 +35,7 @@ public class JwtUtil {
     public static final String REFRESH_TOKEN_HEADER = "REFRESH_TOKEN_HEADER";
 
     // Access Token 만료시간 설정 (10초)
-    public final long ACCESS_TOKEN_EXPIRATION = 30 * 1000L; // 30초
+    public final long ACCESS_TOKEN_EXPIRATION = 60 * 60 * 1000L; // 1시간
     // Refresh Token 만료기간 설정(1시간)
     public final long REFRESH_TOKEN_EXPIRATION = 60 * 60 * 1000L; //1시간
 
@@ -75,18 +76,24 @@ public class JwtUtil {
         throw new NullPointerException("Not Found Token");
     }
 
-    // JWT를 쿠키로 바꾸기
-    public void addJwtToCookie(HttpServletResponse res, String token, String headerName) {
-        try {
-            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
-            Cookie cookie = new Cookie(headerName, token);
-            cookie.setPath("/");
-
-            res.addCookie(cookie);
-        } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage());
-        }
+    public void addJwtToHeader(HttpServletResponse response, String token, String headerName) {
+        response.setHeader(headerName, token);
     }
+
+
+//
+//    // JWT를 쿠키로 바꾸기
+//    public void addJwtToCookie(HttpServletResponse res, String token, String headerName) {
+//        try {
+//            token = URLEncoder.encode(token, "utf-8").replaceAll("\\+", "%20");
+//            Cookie cookie = new Cookie(headerName, token);
+//            cookie.setPath("/");
+//
+//            res.addCookie(cookie);
+//        } catch (UnsupportedEncodingException e) {
+//            logger.error(e.getMessage());
+//        }
+//    }
 
     // 토큰에서 사용자 정보 가져오기
     public Claims getUserInfoFromToken(String token) {
@@ -104,46 +111,43 @@ public class JwtUtil {
 
     //사용자에게서 토큰을 가져오기
     public String getAccessTokenFromRequest(HttpServletRequest req) {
-        return getTokenFromRequest(req, ACCESS_TOKEN_HEADER);
+        return getTokenFromRequest(req, AUTHORIZATION_HEADER);
     }
-
-    public String getRefreshTokenFromRequest(HttpServletRequest req) {
-        return getTokenFromRequest(req, REFRESH_TOKEN_HEADER);
+    //리프레시 토큰은 유저에게서 가져오기
+    public String getRefreshTokenFromRequest(User user) {
+        return user.getRefreshToken();
     }
 
     //HttpServletRequest 에서 Cookie Value  JWT 가져오기
+    // 쿠키가 아닌 헤더로 변경해야함
     public String getTokenFromRequest(HttpServletRequest req, String headerName){
-        Cookie[] cookies = req.getCookies();
-        if(cookies != null){
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals(headerName)){
-                    try {
-                        return URLDecoder.decode(cookie.getValue(), "UTF-8");
-                    }catch (UnsupportedEncodingException e) {
-                        return null;
-                    }
-                }
-            }
+        String token = req.getHeader(headerName);
+        if (token != null && !token.isEmpty()) {
+            return token;
         }
+//            try {
+//                return URLDecoder.decode(token, "UTF-8");
+//            } catch (UnsupportedEncodingException e) {
+//                return null;
+//            }
+//        }
         return null;
     }
 
     // 토큰 검증
-    public boolean validateToken(String token) {
+    public void validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            return true;
         } catch (SecurityException | MalformedJwtException | SignatureException e) {
             log.error("Invalid JWT signature, 유효하지 않는 JWT 서명 입니다.");
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token, 만료된 JWT token 입니다.");
-            return true;
         } catch (UnsupportedJwtException e) {
             log.error("Unsupported JWT token, 지원되지 않는 JWT 토큰 입니다.");
         } catch (IllegalArgumentException e) {
             log.error("JWT claims is empty, 잘못된 JWT 토큰 입니다.");
         }
-        return false;
+
     }
 
     public String getJwtFromHeader(HttpServletRequest req, String headerName) {

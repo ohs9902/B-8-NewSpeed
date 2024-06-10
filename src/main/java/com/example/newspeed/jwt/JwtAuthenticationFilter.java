@@ -29,13 +29,17 @@ import java.util.Optional;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private JwtUtil jwtUtil;
+    UserService userService;
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Autowired
     UserRepository userRepository;
+
+
     private ObjectMapper objectMapper = new ObjectMapper();
-    public JwtAuthenticationFilter(JwtUtil jwtUtil) {
+    public JwtAuthenticationFilter(JwtUtil jwtUtil,UserService userService) {
         this.jwtUtil = jwtUtil;
+        this.userService = userService;
         setFilterProcessesUrl("/api/user/login");
     }
 
@@ -83,11 +87,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         String accessToken = jwtUtil.generateToken(userId, jwtUtil.ACCESS_TOKEN_EXPIRATION , "access");
         String refreshToken = jwtUtil.generateToken(userId , jwtUtil.REFRESH_TOKEN_EXPIRATION,"refresh");
 
-        jwtUtil.addJwtToCookie(response, accessToken,jwtUtil.ACCESS_TOKEN_HEADER);
-        jwtUtil.addJwtToCookie(response, refreshToken,jwtUtil.REFRESH_TOKEN_HEADER);
+        //헤더에 전달해야함
+        jwtUtil.addJwtToHeader(response,accessToken,jwtUtil.AUTHORIZATION_HEADER );
+
+        //헤더에 userId 전달
+        response.setHeader("userId",userId);
+
+        //refresh 토큰을 Entity에 저장
+        userService.updateRefreshToken(userId,refreshToken);
+        //쿠키 전달방식
+//        jwtUtil.addJwtToCookie(response, accessToken,jwtUtil.ACCESS_TOKEN_HEADER);
+//        jwtUtil.addJwtToCookie(response, refreshToken,jwtUtil.REFRESH_TOKEN_HEADER);
 
         log.info("accesstoken : "+accessToken);
         log.info("refreshToken : "+refreshToken);
+        log.info("userId : "+ userId );
 
     }
 

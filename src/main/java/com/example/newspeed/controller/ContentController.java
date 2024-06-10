@@ -8,6 +8,7 @@ import com.example.newspeed.security.UserDetailsImpl;
 import com.example.newspeed.service.ContentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -76,5 +77,12 @@ public class ContentController {
         LocalDateTime start = LocalDateTime.parse(startDate, formatter);
         LocalDateTime end = LocalDateTime.parse(endDate, formatter);
         return contentService.searchContentsByDateRange(start, end, page, size);
+    }
+
+    @GetMapping("/pages/sortedByLike")
+    public Page<ContentDto> getContentsOrderByLikes(@RequestParam(defaultValue = "0") int page,
+                                                 @RequestParam(defaultValue = "10") int size) {
+        return contentService.getContentsOrderByLikes(page,size);
+
     }
 }

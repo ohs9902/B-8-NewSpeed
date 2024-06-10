@@ -12,4 +12,5 @@ import java.util.List;
 public interface ContentRepository extends JpaRepository<Content, Long> {
     List<Content> findAllByOrderByCreatedDateDesc();
     Page<Content> findByCreatedDateBetween(LocalDateTime createdDate, LocalDateTime updatedDate, Pageable pageable);
+    Page<Content> findAllByOrderByLikesDesc(Pageable pageable);
 }

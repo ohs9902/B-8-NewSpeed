@@ -1,5 +1,6 @@
 package com.example.newspeed.entity;
 
+import com.example.newspeed.status.UserStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,7 +33,8 @@ public class User extends Timestamped {
     private String intro;
 
     @Column(nullable = false)
-    private String status = "정상";
+    @Enumerated(EnumType.STRING)
+    private UserStatus status = UserStatus.ACTIVE;
 
     private String refreshToken;
 
@@ -40,19 +42,23 @@ public class User extends Timestamped {
 //    @OneToMany
 //    private List<Content>contentList = new ArrayList<>();
 
-    public User(String userId, String password, String name, String email, String intro, String status) {
+    public User(String userId, String password, String name, String email, String intro) {
         this.userId = userId;
         this.password = password;
         this.userName = name;
         this.email = email;
         this.intro = intro;
-        this.status = status;
     }
     public void update(String name, String intro) {
         this.userName = name;
         this.intro = intro;
     }
-
+    public void withdhrawnStatus(){
+        this.status = UserStatus.WITHDRAWN;
+    }
+    public void updateToken(String refreshToken){
+        this.refreshToken = refreshToken;
+    }
     public void updatePassword(String newPassword) {
         this.password = newPassword;
     }

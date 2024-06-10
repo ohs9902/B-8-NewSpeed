@@ -21,11 +21,14 @@ public class ContentDto {
 
     private LocalDateTime updatedDate;
 
+    private Integer likes;
+
     public ContentDto(Content content) {
         this.id = content.getId();
         this.user = content.getUser();
         this.content = content.getContent();
         this.createdDate = content.getCreatedDate();
         this.updatedDate = content.getUpdatedDate();
+        this.likes = content.getLikes();
     }
 }

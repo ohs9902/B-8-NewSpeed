@@ -91,6 +91,12 @@ public class ContentService {
         return contentPage.map(this::convertToDto);
     }
 
+    public Page<ContentDto> getContentsOrderByLikes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("likes").descending());
+        Page<Content> contentPage = contentRepository.findAllByOrderByLikesDesc(pageable);
+        return contentPage.map(this::convertToDto);
+    }
+
     private ContentDto convertToDto(Content content) {
         return new ContentDto(content);
     }
