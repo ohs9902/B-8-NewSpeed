@@ -31,7 +31,8 @@ public class ProfileController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity<ProfileResponseDto> updatePassword(@AuthenticationPrincipal UserDetailsImpl authentication, @Valid @RequestBody ProfileRequestDto requestDto) {
-        return ResponseEntity.ok().body(profileService.updatePassword(authentication, requestDto));
+    public String updatePassword(@AuthenticationPrincipal UserDetailsImpl authentication, @Valid @RequestBody ProfileRequestDto requestDto) {
+        profileService.updatePassword(authentication, requestDto);
+        return "비밀번호가 변경되었습니다.";
     }
 }

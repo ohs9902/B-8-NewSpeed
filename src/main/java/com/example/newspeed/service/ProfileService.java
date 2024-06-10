@@ -34,7 +34,7 @@ public class ProfileService {
         return ProfileResponseDto.toDto(user);
     }
 
-    public ProfileResponseDto updatePassword(UserDetailsImpl userDetails, ProfileRequestDto requestDto) {
+    public void updatePassword(UserDetailsImpl userDetails, ProfileRequestDto requestDto) {
         User user = userDetails.getUser();
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 맞지 않습니다.");
@@ -47,7 +47,6 @@ public class ProfileService {
 
         user.updatePassword(passwordEncoder.encode(requestDto.getNewPassword()));
         userRepository.save(user);
-        return ProfileResponseDto.toDto(user);
     }
 
     protected User findUser(long id) {
