@@ -32,6 +32,7 @@ public class User extends Timestamped {
     private String intro;
 
     @Column(nullable = false)
+    //@Enumerated(EnumType.STRING)
     private String status = "정상";
 
     private String refreshToken;
